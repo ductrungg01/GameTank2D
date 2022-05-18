@@ -5,6 +5,7 @@ import pkg2dgamesframework.Animation;
 import pkg2dgamesframework.Objects;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +25,7 @@ public class Bullet extends Objects {
         super(x, y, BULLET_WIDTH, BULLET_HEIGHT);
 
         try {
-            imgBullet = ImageIO.read(new File("Assets/sprite.bmp"));
+            imgBullet = ImageIO.read(new File("Assets/sprite.PNG"));
         } catch (IOException ex) {}
 
         this.rotation = rotation;
@@ -82,7 +83,7 @@ public class Bullet extends Objects {
     }
     //endregion
 
-    public BufferedImage getImgBullet() {
+    public BufferedImage getImg() {
         return imgBullet;
     }
 

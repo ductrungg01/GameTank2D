@@ -58,7 +58,7 @@ public class Player2 extends Objects {
     public void Reset() throws IOException {
         posX = 200;
         posY = 200;
-        imgTanks = ImageIO.read(new File("Assets/sprite.bmp"));
+        imgTanks = ImageIO.read(new File("Assets/sprite.PNG"));
         rotation = Rotation.UP;
         state = State.IDLE;
         animation = new ArrayList<Animation>();

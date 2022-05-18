@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static game.tank2d.Tank2D.PIXEL;
+
 enum Rotation {
     LEFT((float)( -0.5f*Math.PI)),
     UP(0),
@@ -52,6 +54,10 @@ public class Player extends Objects {
 
     static Player instance;
 
+    static final int PLAYER_WIDTH = 26;
+    static final int PLAYER_HEIGHT = 30;
+    static final int PLAYER_MOVE = 8;
+
     static {
         try {
             instance = new Player();
@@ -89,9 +95,9 @@ public class Player extends Objects {
     }
 
     public void Reset() throws IOException {
-        posX = 100;
-        posY = 100;
-        imgTanks = ImageIO.read(new File("Assets/sprite.bmp"));
+        posX = PIXEL * 8;
+        posY = PIXEL * (26 - 2);
+        imgTanks = ImageIO.read(new File("Assets/sprite.PNG"));
         rotation = Rotation.UP;
         state = State.IDLE;
         animation = new ArrayList<Animation>();

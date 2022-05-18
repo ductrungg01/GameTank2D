@@ -45,7 +45,7 @@ public class Enemy extends Objects {
         this.type = type;
 
         try {
-            imgTanks = ImageIO.read(new File("Assets/sprite.bmp"));
+            imgTanks = ImageIO.read(new File("Assets/sprite.PNG"));
         } catch (IOException ex) {}
 
         //rotation = Rotation.DOWN;

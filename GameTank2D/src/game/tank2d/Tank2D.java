@@ -1,36 +1,83 @@
 package game.tank2d;
 
+import pkg2dgamesframework.Animation;
 import pkg2dgamesframework.GameScreen;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 import static game.tank2d.Brick.BRICK_HEIGHT;
 import static game.tank2d.Brick.BRICK_WIDTH;
 import static game.tank2d.Enemy.ENEMY_HEIGHT;
 import static game.tank2d.Enemy.ENEMY_WIDTH;
+import static game.tank2d.Player.PLAYER_WIDTH;
+import static game.tank2d.Player.PLAYER_HEIGHT;
+import static game.tank2d.Player.PLAYER_MOVE;
+
+
+//interface GameObject {
+//    public void update(long deltaTime);
+//    public Animation getAnimation();
+//    public Rotation getRotation();
+//    public int getPosX();
+//    public int getPosY();
+//    public BufferedImage getImg();
+//}
 
 public class Tank2D extends GameScreen {
 
-    Enemy enemy001 = new Enemy(TypeOfEnemy.ENEMY004, 250, 250, ENEMY_WIDTH, ENEMY_HEIGHT);
-    Brick brick001 = new Brick(TypeOfBrick.BRICK001, 300, 300, BRICK_WIDTH, BRICK_HEIGHT);
-    Brick brick002 = new Brick(TypeOfBrick.BRICK002, 330, 300, BRICK_WIDTH, BRICK_HEIGHT);
-    Brick brick003 = new Brick(TypeOfBrick.BRICK003, 300, 330, BRICK_WIDTH, BRICK_HEIGHT);
-    Brick brick004 = new Brick(TypeOfBrick.BUSH, 330, 330, BRICK_WIDTH, BRICK_HEIGHT);
-    Brick brick005 = new Brick(TypeOfBrick.WATER, 400, 300, BRICK_WIDTH, BRICK_HEIGHT);
+    static ArrayList<Brick> mapBrick = new ArrayList<Brick>();
 
-    Bullet bullet001 = new Bullet(150, 250, Rotation.DOWN);
+    public static final int MAP_WIDTH_TILE = 26;
+    public static final int MAP_HEIGHT_TILE = 26;
+    public static final int PIXEL = 16;
 
-    Shield shield001 = new Shield(90, 100);
+    static Map maps = new Map();
+
+    Alphabet Al = new Alphabet(TypeOfAlphabet.BSLASH, 16, 16, BRICK_WIDTH, BRICK_HEIGHT);
+
+    Enemy enemy001 = new Enemy(TypeOfEnemy.ENEMY004, 50, 16, ENEMY_WIDTH, ENEMY_HEIGHT);
+
+    Bullet bullet001 = new Bullet(16, 16, Rotation.DOWN);
+
+    Shield shield001 = new Shield(PIXEL * 8 , MAP_HEIGHT_TILE * PIXEL - PLAYER_HEIGHT);
+
+    //ArrayList<GameObject> gameObjects = new ArrayList<GameObject>();
 
     public Tank2D() {
-        super(500, 500);
+        super(MAP_WIDTH_TILE * PIXEL, MAP_HEIGHT_TILE * PIXEL);
 
         BeginGame();
     }
 
     public static void main(String[] args) {
-        new Tank2D();
+
+        maps.initBrickMap1();
+        mapBrick = maps.getBrickListMap1();
+        GameScreen game = new Tank2D();
+    }
+
+    public  boolean checkBoundX(int PosX) {
+        if (PosX < 0 || PosX > PIXEL * MAP_WIDTH_TILE - PLAYER_WIDTH)
+            return false;
+        return true;
+    }
+
+    public  boolean checkBoundY(int PosY) {
+        if (PosY < 0 || PosY > PIXEL * MAP_HEIGHT_TILE - PLAYER_HEIGHT)
+            return false;
+        return true;
+    }
+
+    public void PAINT_OBJECT(Graphics2D g2, Brick b) {
+        b.getAnimation().PaintAnims(b.getPosX(), b.getPosY(), b.getImgBrick(), g2, 0, b.getRotation().getRotate());
+    }
+
+    public void PAINT_OBJECT(Graphics2D g2, Alphabet b) {
+        b.getAnimation().PaintAnims(b.getPosX(), b.getPosY(), b.getImgAlphabet(), g2, 0, b.getRotation().getRotate());
     }
 
     @Override
@@ -44,52 +91,46 @@ public class Tank2D extends GameScreen {
         // player2
         Player2.getInstance().getAnimation().Update_Me(deltaTime);
 
-        // brick
-        brick001.update(deltaTime);
-        brick002.update(deltaTime);
-        brick003.update(deltaTime);
-        brick004.update(deltaTime);
-        brick005.update(deltaTime);
-
         // enemy
         enemy001.update(deltaTime);
 
         // bullet
         bullet001.update(deltaTime);
 
-
     }
 
     @Override
     public void GAME_PAINT(Graphics2D g2) {
-        g2.setColor(Color.black);
-        g2.fillRect(0, 0, 500, 500);
+        g2.setColor(Color.LIGHT_GRAY);
+        g2.fillRect(0, 0, MAP_WIDTH_TILE * PIXEL, MAP_HEIGHT_TILE * PIXEL);
 
+
+
+        Player.getInstance().getAnimation().PaintAnims(Player.getInstance().getPosX(), Player.getInstance().getPosY(), Player.getInstance().getImgTanks(), g2, 0, Player.getInstance().getRotation().getRotate());
+
+        for (int i = 0; i < mapBrick.size(); i++)
+        {
+            PAINT_OBJECT(g2, mapBrick.get(i));
+        }
+
+
+        //region Test
         // shield
         shield001.getAnimation().PaintAnims(shield001.getPosX(), shield001.getPosY(), shield001.getImgShield(), g2, 0, shield001.getRotation().getRotate());
 
         // player
-        Player.getInstance().getAnimation().PaintAnims(Player.getInstance().getPosX(), Player.getInstance().getPosY(), Player.getInstance().getImgTanks(), g2, 0, Player.getInstance().getRotation().getRotate());
-
+        PAINT_OBJECT(g2, Al);
         // player2
         Player2.getInstance().getAnimation().PaintAnims(Player2.getInstance().getPosX(), Player2.getInstance().getPosY(), Player2.getInstance().getImgTanks(), g2, 0, Player2.getInstance().getRotation().getRotate());
-
-        // brick
-        brick001.getAnimation().PaintAnims(brick001.getPosX(), brick001.getPosY(), brick001.getImgBrick(), g2, 0, brick001.getRotation().getRotate());
-        brick002.getAnimation().PaintAnims(brick002.getPosX(), brick002.getPosY(), brick002.getImgBrick(), g2, 0, brick002.getRotation().getRotate());
-        brick003.getAnimation().PaintAnims(brick003.getPosX(), brick003.getPosY(), brick003.getImgBrick(), g2, 0, brick003.getRotation().getRotate());
-        brick004.getAnimation().PaintAnims(brick004.getPosX(), brick004.getPosY(), brick004.getImgBrick(), g2, 0, brick004.getRotation().getRotate());
-        brick005.getAnimation().PaintAnims(brick005.getPosX(), brick005.getPosY(), brick005.getImgBrick(), g2, 0, brick005.getRotation().getRotate());
 
         // enemy
         enemy001.getAnimation().PaintAnims(enemy001.getPosX(), enemy001.getPosY(), enemy001.getImgTanks(), g2, 0, enemy001.getRotation().getRotate());
 
         // bullet
-        bullet001.getAnimation().PaintAnims(bullet001.getPosX(), bullet001.getPosY(), bullet001.getImgBullet(), g2, 0, bullet001.getRotation().getRotate());
+        bullet001.getAnimation().PaintAnims(bullet001.getPosX(), bullet001.getPosY(), bullet001.getImg(), g2, 0, bullet001.getRotation().getRotate());
 
-
+        //endregion
     }
-
 
     @Override
     public void KEY_ACTION(KeyEvent e, int Event) {
@@ -98,27 +139,39 @@ public class Tank2D extends GameScreen {
                 case KeyEvent.VK_LEFT: // left
                     Player.getInstance().setState(State.RUN);
                     Player.getInstance().setRotation(Rotation.LEFT);
-                    Player.getInstance().setPosX(Player.instance.getPosX()-10);
+                    if (checkBoundX(Player.instance.getPosX() - PLAYER_MOVE))
+                        Player.getInstance().setPosX(Player.instance.getPosX() - PLAYER_MOVE);
+                    else
+                        Player.getInstance().setPosX(0);
                     break;
                 case KeyEvent.VK_UP: // up
                     Player.getInstance().setState(State.RUN);
                     Player.getInstance().setRotation(Rotation.UP);
-                    Player.getInstance().setPosY(Player.instance.getPosY()-10);
+                    if (checkBoundY(Player.instance.getPosY() - PLAYER_MOVE))
+                        Player.getInstance().setPosY(Player.instance.getPosY() - PLAYER_MOVE);
+                    else
+                        Player.getInstance().setPosY(0);
                     break;
                 case KeyEvent.VK_RIGHT: // right
                     Player.getInstance().setState(State.RUN);
                     Player.getInstance().setRotation(Rotation.RIGHT);
-                    Player.getInstance().setPosX(Player.instance.getPosX()+10);
+                    if (checkBoundX(Player.instance.getPosX() + PLAYER_MOVE))
+                        Player.getInstance().setPosX(Player.instance.getPosX() + PLAYER_MOVE);
+                    else
+                        Player.getInstance().setPosX(PIXEL * MAP_WIDTH_TILE - PLAYER_WIDTH);
                     break;
                 case KeyEvent.VK_DOWN: // down
                     Player.getInstance().setState(State.RUN);
                     Player.getInstance().setRotation(Rotation.DOWN);
-                    Player.getInstance().setPosY(Player.instance.getPosY()+10);
+                    if (checkBoundY(Player.instance.getPosY() + PLAYER_MOVE))
+                        Player.getInstance().setPosY(Player.instance.getPosY() + PLAYER_MOVE);
+                    else
+                        Player.getInstance().setPosY(PIXEL * MAP_HEIGHT_TILE - PLAYER_HEIGHT);
                     break;
                 case KeyEvent.VK_A: // A (left for player 2)
                     Player2.getInstance().setState(State.RUN);
                     Player2.getInstance().setRotation(Rotation.LEFT);
-                    Player2.getInstance().setPosX(Player2.instance.getPosX()-10);
+                    Player2.getInstance().setPosX(Player2.instance.getPosX() - 10);
                     break;
                 case KeyEvent.VK_W: // W (up for player 2)
                     Player2.getInstance().setState(State.RUN);
@@ -135,7 +188,11 @@ public class Tank2D extends GameScreen {
                     Player2.getInstance().setRotation(Rotation.DOWN);
                     Player2.getInstance().setPosY(Player2.instance.getPosY()+10);
                     break;
-
+                case KeyEvent.VK_SPACE:
+//                    Bullet b = new Bullet(Player.getInstance().getPosX(), Player.getInstance().getPosX(), Player.getInstance().getRotation());
+//                    gameObjects.add(b);
+//                    JOptionPane.showMessageDialog(null, gameObjects.size());
+                    break;
             }
         }
         if (Event == KEY_RELEASED)

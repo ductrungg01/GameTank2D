@@ -24,7 +24,7 @@ public class Shield extends Objects {
         super(x, y, SHIELD_WIDTH, SHIELD_HEIGHT);
 
         try {
-            imgShield = ImageIO.read(new File("Assets/sprite.bmp"));
+            imgShield = ImageIO.read(new File("Assets/sprite.PNG"));
         } catch (IOException ex) {}
 
         animation = new ArrayList<Animation>();

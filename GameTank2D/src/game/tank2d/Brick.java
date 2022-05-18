@@ -5,6 +5,7 @@ import pkg2dgamesframework.Animation;
 import pkg2dgamesframework.Objects;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 enum TypeOfBrick{
+    BRICK000(0),
     BRICK001(1),
     BRICK002(2),
     BRICK003(3),
@@ -26,6 +28,7 @@ enum TypeOfBrick{
     public int getType() {
         return type;
     }
+
 }
 
 public class Brick extends Objects {
@@ -45,7 +48,7 @@ public class Brick extends Objects {
         this.type = type;
 
         try {
-            imgBrick = ImageIO.read(new File("Assets/sprite.bmp"));
+            imgBrick = ImageIO.read(new File("Assets/sprite.PNG"));
         } catch (IOException ex) {}
 
         rotation = Rotation.UP;
