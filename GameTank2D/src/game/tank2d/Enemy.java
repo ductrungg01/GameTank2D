@@ -5,11 +5,14 @@ import pkg2dgamesframework.Animation;
 import pkg2dgamesframework.Objects;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 enum TypeOfEnemy{
     ENEMY001(1),
@@ -36,11 +39,21 @@ public class Enemy extends Objects {
     private List<Animation> animation;
     private Rotation rotation;
     private State state;
-
     private TypeOfEnemy type;
-
-    Enemy(TypeOfEnemy type, int x, int y, int w, int h) {
+    private EnemyAppear enemyAppear;
+    private Timer timer = new Timer();
+    private TimerTask timerTask = new TimerTask() {
+        @Override
+        public void run() {
+            InactiveAppear();
+            System.out.println("timerTask of enemy");
+        }
+    };
+    Enemy(TypeOfEnemy type, int x, int y, int w, int h, Rotation rotation) {
         super(x, y, w, h);
+
+        this.timer.schedule(timerTask, EnemyAppear.ENEMYAPPEAR_ACTIVE_TIME);
+        this.enemyAppear = new EnemyAppear(this.getPosX(), this.getPosY());
 
         this.type = type;
 
@@ -48,10 +61,7 @@ public class Enemy extends Objects {
             imgTanks = ImageIO.read(new File("Assets/sprite.PNG"));
         } catch (IOException ex) {}
 
-        //rotation = Rotation.DOWN;
-        rotation = Rotation.UP;
-        //rotation = Rotation.RIGHT;
-        //rotation = Rotation.LEFT;
+        this.rotation = rotation;
         state = State.IDLE;
         animation = new ArrayList<Animation>();
 
@@ -70,7 +80,9 @@ public class Enemy extends Objects {
                 break;
         }
     }
-
+    private void InactiveAppear(){
+        this.enemyAppear.setActive(false);
+    }
     //region Load animation
     private void loadAnimationOfType001(){
         //// IDLE
@@ -187,28 +199,40 @@ public class Enemy extends Objects {
     }
     //endregion
     public void update(long deltaTime){
-        Rotation rotation = this.getRotation();
+        if (this.enemyAppear.isActive){
+            this.enemyAppear.update(deltaTime);
+        } else {
+            Rotation rotation = this.getRotation();
 
-        this.setState(State.RUN);
-        switch (rotation){
-            case UP -> {
-                goUp();
-                break;
+            this.setState(State.RUN);
+            switch (rotation){
+                case UP -> {
+                    goUp();
+                    break;
+                }
+                case DOWN -> {
+                    goDown();
+                    break;
+                }
+                case LEFT -> {
+                    goLeft();
+                    break;
+                }
+                case RIGHT -> {
+                    goRight();
+                    break;
+                }
             }
-            case DOWN -> {
-                goDown();
-                break;
-            }
-            case LEFT -> {
-                goLeft();
-                break;
-            }
-            case RIGHT -> {
-                goRight();
-                break;
-            }
+
+            this.getAnimation().Update_Me(deltaTime);
         }
-        this.getAnimation().Update_Me(deltaTime);
+    }
+    public void paint(Graphics2D g2){
+        if (this.enemyAppear.isActive){
+            this.enemyAppear.paint(g2);
+        } else {
+            this.getAnimation().PaintAnims(this.getPosX(), this.getPosY(), this.getImgTanks(), g2, 0, this.getRotation().getRotate());
+        }
     }
 
     //region Move method
@@ -269,6 +293,13 @@ public class Enemy extends Objects {
     public void setType(TypeOfEnemy type) {
         this.type = type;
     }
-    //endregion
 
+    public EnemyAppear getEnemyAppear() {
+        return enemyAppear;
+    }
+
+    public void setEnemyAppear(EnemyAppear enemyAppear) {
+        this.enemyAppear = enemyAppear;
+    }
+    //endregion
 }

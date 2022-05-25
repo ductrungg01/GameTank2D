@@ -54,6 +54,26 @@ public class Brick extends Objects {
         rotation = Rotation.UP;
         state = State.IDLE;
 
+        setAnimation(type);
+    }
+    public void update(long deltaTime){
+        this.getAnimation().Update_Me(deltaTime);
+    }
+
+    //region Getter and Setter
+    public BufferedImage getImgBrick() {
+        return imgBrick;
+    }
+
+    public void setImgBrick(BufferedImage imgBrick) {
+        this.imgBrick = imgBrick;
+    }
+
+    public Animation getAnimation() {
+        return animation.get(state.getState());
+    }
+
+    public void setAnimation(TypeOfBrick type) {
         animation = new ArrayList<Animation>();
 
         int yOnImg = 0;
@@ -88,25 +108,6 @@ public class Brick extends Objects {
         anim.AddFrame(aFrameOnImage);
         animation.add(anim);
     }
-    public void update(long deltaTime){
-        this.getAnimation().Update_Me(deltaTime);
-    }
-    //region Getter and Setter
-    public BufferedImage getImgBrick() {
-        return imgBrick;
-    }
-
-    public void setImgBrick(BufferedImage imgBrick) {
-        this.imgBrick = imgBrick;
-    }
-
-    public Animation getAnimation() {
-        return animation.get(state.getState());
-    }
-
-    public void setAnimation(List<Animation> animation) {
-        this.animation = animation;
-    }
 
     public State getState() {
         return state;
@@ -122,6 +123,7 @@ public class Brick extends Objects {
 
     public void setType(TypeOfBrick type) {
         this.type = type;
+        setAnimation(type);
     }
 
     public Rotation getRotation() {

@@ -71,7 +71,6 @@ public class Map {
                     mapbrick.add(new Brick(brickMap1[i][j], getTilePosX(MAP_WIDTH_TILE * i + j), getTilePosY(MAP_WIDTH_TILE * i + j), BRICK_WIDTH, BRICK_HEIGHT));
             }
         }
-
     }
 
     int getTilePosX(int tileNumber)

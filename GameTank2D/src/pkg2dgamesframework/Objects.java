@@ -5,6 +5,8 @@
  */
 package pkg2dgamesframework;
 
+import java.awt.*;
+
 /**
  *
  * @author phamn
@@ -13,6 +15,7 @@ public class Objects {
     
     protected int posX, posY;
     protected int w, h;
+    protected Rectangle rect;
     
     public Objects(){
          posX = posY = w = h = 0;
@@ -23,6 +26,7 @@ public class Objects {
         this.posY = y;
         this.w = w;
         this.h = h;
+        this.setRect(new Rectangle(posX, posY, w, h));
     }
     
     public boolean isCollisionHappenWith(float x, float y){
@@ -41,15 +45,27 @@ public class Objects {
     }
     public void setPosX(int x){
         posX = x;
+        updateRect();
     }
     public void setPosY(int y){
         posY = y;
+        updateRect();
     }
     public int getPosX(){
         return posX;
     }
     public int getPosY(){
         return posY;
+    }
+    public Rectangle getRect() {
+        return rect;
+    }
+
+    public void setRect(Rectangle rect) {
+        this.rect = rect;
+    }
+    public void updateRect(){
+        this.rect.setLocation(posX, posY);
     }
     public float getW(){
         return w;

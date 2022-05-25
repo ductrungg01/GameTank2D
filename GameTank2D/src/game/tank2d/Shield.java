@@ -5,6 +5,7 @@ import pkg2dgamesframework.Animation;
 import pkg2dgamesframework.Objects;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -14,12 +15,13 @@ import java.util.List;
 public class Shield extends Objects {
     public static final int SHIELD_WIDTH = 33;
     public static final int SHIELD_HEIGHT = 33;
+    public static final int SHIELD_ACTIVE_TIME = 3000;
 
     private BufferedImage imgShield;
     private List<Animation> animation;
     private final Rotation rotation = Rotation.UP;
     private final State state = State.IDLE;
-
+    public boolean isActive = true;
     Shield(int x, int y){
         super(x, y, SHIELD_WIDTH, SHIELD_HEIGHT);
 
@@ -40,6 +42,9 @@ public class Shield extends Objects {
     }
     public void update(long deltaTime){
         this.getAnimation().Update_Me(deltaTime);
+    }
+    public void paint(Graphics2D g2){
+        this.getAnimation().PaintAnims(this.getPosX(), this.getPosY(), this.getImgShield(), g2, 0, this.getRotation().getRotate());
     }
     //region Getter and Setter
     public BufferedImage getImgShield() {
@@ -64,6 +69,14 @@ public class Shield extends Objects {
 
     public State getState() {
         return state;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
     //endregion
 }

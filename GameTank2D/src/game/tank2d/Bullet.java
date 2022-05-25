@@ -15,7 +15,7 @@ import java.util.List;
 public class Bullet extends Objects {
     public static final int BULLET_WIDTH = 7;
     public static final int BULLET_HEIGHT = 9;
-
+    private static final int BULLET_SPEED = 2;
     private BufferedImage imgBullet;
     private List<Animation> animation;
     private Rotation rotation;
@@ -63,22 +63,21 @@ public class Bullet extends Objects {
         this.getAnimation().Update_Me(deltaTime);
     }
 
-
     //region Move method
     private void goUp(){
-        this.setPosY(this.getPosY() - 1);
+        this.setPosY(this.getPosY() - BULLET_SPEED);
         this.setRotation(Rotation.UP);
     }
     private void goDown(){
-        this.setPosY(this.getPosY() + 1);
+        this.setPosY(this.getPosY() + BULLET_SPEED);
         this.setRotation(Rotation.DOWN);
     }
     private void goLeft(){
-        this.setPosX(this.getPosX() - 1);
+        this.setPosX(this.getPosX() - BULLET_SPEED);
         this.setRotation(Rotation.LEFT);
     }
     private void goRight(){
-        this.setPosX(this.getPosX() + 1);
+        this.setPosX(this.getPosX() + BULLET_SPEED);
         this.setRotation(Rotation.RIGHT);
     }
     //endregion
