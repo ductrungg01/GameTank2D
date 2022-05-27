@@ -72,31 +72,19 @@ enum TypeOfAlphabet {
 public class Alphabet extends Objects {
     public static final int ALPHABET_WIDTH = 16;
     public static final int ALPHABET_HEIGHT = 16;
-
-    private BufferedImage imgAlphabet;
-    private List<Animation> animation;
-    private State state;
-    private Rotation rotation;
-
+    private static final State DEFAULT_STATE = State.IDLE;
+    private static final Rotation DEFAULT_ROTATION = Rotation.UP;
     private TypeOfAlphabet type;
 
     Alphabet(TypeOfAlphabet type, int x, int y, int w, int h){
-        super(x, y, w, h);
+        super(x, y, w, h, DEFAULT_STATE, DEFAULT_ROTATION);
 
         this.type = type;
 
-        try {
-            imgAlphabet = ImageIO.read(new File("Assets/sprite.PNG"));
-        } catch (IOException ex) {}
-
-        rotation = Rotation.UP;
-        state = State.IDLE;
-
-        animation = new ArrayList<Animation>();
-
         int yOnImg = 0;
         int xOnImg = 0;
-// region case
+
+        // region case
         switch (type){
             case A -> {
                 xOnImg = 16 * 0;
@@ -315,56 +303,20 @@ public class Alphabet extends Objects {
             }
 
         }
-// endregion
-        //// IDLE
-        Animation anim = new Animation(100);
-        AFrameOnImage aFrameOnImage;
-        aFrameOnImage = new AFrameOnImage(xOnImg, yOnImg, ALPHABET_WIDTH, ALPHABET_HEIGHT);
-        anim.AddFrame(aFrameOnImage);
-        animation.add(anim);
+        // endregion
+
+        super.setAnimation(100, xOnImg, yOnImg, ALPHABET_WIDTH, ALPHABET_HEIGHT);
     }
     public void update(long deltaTime){
         this.getAnimation().Update_Me(deltaTime);
     }
     //region Getter and Setter
-    public BufferedImage getImgAlphabet() {
-        return imgAlphabet;
-    }
-
-    public void setImgAlphabet(BufferedImage imgAlphabet) {
-        this.imgAlphabet = imgAlphabet;
-    }
-
-    public Animation getAnimation() {
-        return animation.get(state.getState());
-    }
-
-    public void setAnimation(List<Animation> animation) {
-        this.animation = animation;
-    }
-
-    public State getState() {
-        return state;
-    }
-
-    public void setState(State state) {
-        this.state = state;
-    }
-
     public TypeOfAlphabet getType() {
         return type;
     }
 
     public void setType(TypeOfAlphabet type) {
         this.type = type;
-    }
-
-    public Rotation getRotation() {
-        return rotation;
-    }
-
-    public void setRotation(Rotation rotation) {
-        this.rotation = rotation;
     }
 //endregion
 }

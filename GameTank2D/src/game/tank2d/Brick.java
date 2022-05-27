@@ -34,48 +34,20 @@ enum TypeOfBrick{
 public class Brick extends Objects {
     public static final int BRICK_WIDTH = 16;
     public static final int BRICK_HEIGHT = 16;
-
-    private BufferedImage imgBrick;
-    private List<Animation> animation;
-    private State state;
-    private Rotation rotation;
-
+    static final State DEFAULT_STATE = State.IDLE;
+    static final Rotation DEFAULT_ROTATION = Rotation.UP;
     private TypeOfBrick type;
 
     Brick(TypeOfBrick type, int x, int y, int w, int h){
-        super(x, y, w, h);
+        super(x, y, w, h, DEFAULT_STATE, DEFAULT_ROTATION);
 
         this.type = type;
 
-        try {
-            imgBrick = ImageIO.read(new File("Assets/sprite.PNG"));
-        } catch (IOException ex) {}
-
-        rotation = Rotation.UP;
-        state = State.IDLE;
-
         setAnimation(type);
-    }
-    public void update(long deltaTime){
-        this.getAnimation().Update_Me(deltaTime);
     }
 
     //region Getter and Setter
-    public BufferedImage getImgBrick() {
-        return imgBrick;
-    }
-
-    public void setImgBrick(BufferedImage imgBrick) {
-        this.imgBrick = imgBrick;
-    }
-
-    public Animation getAnimation() {
-        return animation.get(state.getState());
-    }
-
     public void setAnimation(TypeOfBrick type) {
-        animation = new ArrayList<Animation>();
-
         int yOnImg = 0;
 
         switch (type){
@@ -101,20 +73,7 @@ public class Brick extends Objects {
             }
         }
 
-        //// IDLE
-        Animation anim = new Animation(100);
-        AFrameOnImage aFrameOnImage;
-        aFrameOnImage = new AFrameOnImage(0, yOnImg, BRICK_WIDTH, BRICK_HEIGHT);
-        anim.AddFrame(aFrameOnImage);
-        animation.add(anim);
-    }
-
-    public State getState() {
-        return state;
-    }
-
-    public void setState(State state) {
-        this.state = state;
+        super.setAnimation(100, 0, yOnImg, BRICK_WIDTH, BRICK_HEIGHT);
     }
 
     public TypeOfBrick getType() {
@@ -125,13 +84,5 @@ public class Brick extends Objects {
         this.type = type;
         setAnimation(type);
     }
-
-    public Rotation getRotation() {
-        return rotation;
-    }
-
-    public void setRotation(Rotation rotation) {
-        this.rotation = rotation;
-    }
-//endregion
+    //endregion
 }

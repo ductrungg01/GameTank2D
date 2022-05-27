@@ -16,97 +16,47 @@ public class Bullet extends Objects {
     public static final int BULLET_WIDTH = 7;
     public static final int BULLET_HEIGHT = 9;
     private static final int BULLET_SPEED = 2;
-    private BufferedImage imgBullet;
-    private List<Animation> animation;
-    private Rotation rotation;
-    private final State state = State.IDLE;
+    private static final State DEFAULT_STATE = State.IDLE;
 
-    Bullet(int x, int y, Rotation rotation){
-        super(x, y, BULLET_WIDTH, BULLET_HEIGHT);
+    Bullet(int x, int y, Rotation rotation) {
+        super(x, y, BULLET_WIDTH, BULLET_HEIGHT, DEFAULT_STATE, rotation);
 
-        try {
-            imgBullet = ImageIO.read(new File("Assets/sprite.PNG"));
-        } catch (IOException ex) {}
-
-        this.rotation = rotation;
-        animation = new ArrayList<Animation>();
-
-        //// IDLE
-        Animation anim = new Animation(100);
-        AFrameOnImage aFrameOnImage;
-        aFrameOnImage = new AFrameOnImage(0, 351, BULLET_WIDTH, BULLET_HEIGHT);
-        anim.AddFrame(aFrameOnImage);
-        animation.add(anim);
+        setAnimation(100, 0, 351, BULLET_WIDTH, BULLET_HEIGHT);
     }
 
-    public void update(long deltaTime){
-        Rotation rotation = this.getRotation();
+    public void Update(long deltaTime) {
+        Move(this.getRotation(), BULLET_SPEED);
 
-        switch (rotation){
+        this.getAnimation().Update_Me(deltaTime);
+
+        this.updateRect();
+    }
+    public Explosion createNewExplosion(){
+        int x = this.getPosX();
+        int y = this.getPosY();
+
+        switch (this.rotation){
             case UP -> {
-                goUp();
+                x = this.getPosX() + 3;
                 break;
             }
             case DOWN -> {
-                goDown();
+                x = this.getPosX() + 3;
+                y = this.getPosY() + BULLET_HEIGHT;
                 break;
             }
             case LEFT -> {
-                goLeft();
+                y = this.getPosY() + 3;
                 break;
             }
             case RIGHT -> {
-                goRight();
+                x = this.getPosX() + BULLET_WIDTH;
+                y = this.getPosY() + 3;
                 break;
             }
         }
-        this.getAnimation().Update_Me(deltaTime);
+
+        return new Explosion(x - Explosion.EXPLOSION_WIDTH/2, y - Explosion.EXPLOSION_HEIGHT/2);
     }
 
-    //region Move method
-    private void goUp(){
-        this.setPosY(this.getPosY() - BULLET_SPEED);
-        this.setRotation(Rotation.UP);
-    }
-    private void goDown(){
-        this.setPosY(this.getPosY() + BULLET_SPEED);
-        this.setRotation(Rotation.DOWN);
-    }
-    private void goLeft(){
-        this.setPosX(this.getPosX() - BULLET_SPEED);
-        this.setRotation(Rotation.LEFT);
-    }
-    private void goRight(){
-        this.setPosX(this.getPosX() + BULLET_SPEED);
-        this.setRotation(Rotation.RIGHT);
-    }
-    //endregion
-
-    public BufferedImage getImg() {
-        return imgBullet;
-    }
-
-    public void setImgBullet(BufferedImage imgBullet) {
-        this.imgBullet = imgBullet;
-    }
-
-    public Animation getAnimation() {
-        return animation.get(state.getState());
-    }
-
-    public void setAnimation(List<Animation> animation) {
-        this.animation = animation;
-    }
-
-    public Rotation getRotation() {
-        return rotation;
-    }
-
-    public void setRotation(Rotation rotation) {
-        this.rotation = rotation;
-    }
-
-    public State getState() {
-        return state;
-    }
 }

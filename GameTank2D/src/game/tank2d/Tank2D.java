@@ -1,37 +1,22 @@
 package game.tank2d;
 
-import pkg2dgamesframework.Animation;
 import pkg2dgamesframework.GameScreen;
-import pkg2dgamesframework.QueueList;
+import pkg2dgamesframework.Objects;
 
-import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import static game.tank2d.Brick.BRICK_HEIGHT;
 import static game.tank2d.Brick.BRICK_WIDTH;
-import static game.tank2d.Enemy.ENEMY_HEIGHT;
-import static game.tank2d.Enemy.ENEMY_WIDTH;
 import static game.tank2d.Player.PLAYER_WIDTH;
 import static game.tank2d.Player.PLAYER_HEIGHT;
-import static game.tank2d.Player.PLAYER_MOVE;
 
-
-//interface GameObject {
-//    public void update(long deltaTime);
-//    public Animation getAnimation();
-//    public Rotation getRotation();
-//    public int getPosX();
-//    public int getPosY();
-//    public BufferedImage getImg();
-//}
 
 public class Tank2D extends GameScreen {
 
     static ArrayList<Brick> mapBrick = new ArrayList<Brick>();
-
     public static final int MAP_WIDTH_TILE = 26;
     public static final int MAP_HEIGHT_TILE = 26;
     public static final Color BACKGROUND_GAME_COLOR = Color.BLACK;
@@ -40,13 +25,11 @@ public class Tank2D extends GameScreen {
     static Map maps = new Map();
 
     Alphabet Al = new Alphabet(TypeOfAlphabet.BSLASH, 16, 16, BRICK_WIDTH, BRICK_HEIGHT);
-
-    Enemy enemy001 = new Enemy(TypeOfEnemy.ENEMY004, 50, 16, ENEMY_WIDTH, ENEMY_HEIGHT, Rotation.DOWN);
-
-    Bullet bullet001 = new Bullet(16, 16, Rotation.DOWN);
-
+    Enemy enemy001 = new Enemy(TypeOfEnemy.ENEMY004, 50, 16, Objects.Rotation.DOWN);
+    Bullet bullet001 = new Bullet(16, 16, Objects.Rotation.DOWN);
     //ArrayList<GameObject> gameObjects = new ArrayList<GameObject>();
     ArrayList<Bullet> bulletList = new ArrayList<Bullet>();
+    ArrayList<Explosion> explosionList = new ArrayList<Explosion>();
 
     public Tank2D() {
         super(MAP_WIDTH_TILE * PIXEL, MAP_HEIGHT_TILE * PIXEL);
@@ -62,14 +45,16 @@ public class Tank2D extends GameScreen {
     }
 
     public void PAINT_OBJECT(Graphics2D g2, Brick b) {
-        b.getAnimation().PaintAnims(b.getPosX(), b.getPosY(), b.getImgBrick(), g2, 0, b.getRotation().getRotate());
+        b.getAnimation().PaintAnims(b.getPosX(), b.getPosY(), b.getImage(), g2, 0, b.getRotation().getRotate());
     }
 
     public void PAINT_OBJECT(Graphics2D g2, Alphabet b) {
-        b.getAnimation().PaintAnims(b.getPosX(), b.getPosY(), b.getImgAlphabet(), g2, 0, b.getRotation().getRotate());
+        b.getAnimation().PaintAnims(b.getPosX(), b.getPosY(), b.getImage(), g2, 0, b.getRotation().getRotate());
     }
-
-    boolean checkCollisionWithBrick(Rotation rotation){
+    public void newExposion(Bullet bullet){
+        explosionList.add(bullet.createNewExplosion());
+    }
+    boolean checkCollisionWithBrick(Objects.Rotation rotation){
         Point p = new Point(0, 0);
 
         switch (rotation){
@@ -111,12 +96,18 @@ public class Tank2D extends GameScreen {
     public void CollisionHandling(){
         // Collision handling: BRICK AND BULLET
         for (int i = 0; i < bulletList.size(); i++){
+
+            Bullet bulletNow = bulletList.get(i);
+            Rectangle bulletRectNow = bulletNow.getRect();
+
+            boolean needRemoveBullet = false;
+
             for (int j = 0; j < mapBrick.size(); j++){
+
                 Brick brickNow = mapBrick.get(j);
-                Rectangle bulletRectNow = bulletList.get(i).getRect();
                 Rectangle brickRectNow = brickNow.getRect();
+
                 if (bulletRectNow.intersects(brickRectNow)){
-                    boolean needRemoveBullet = false;
 
                     switch (brickNow.getType()){
                         case BRICK000 -> {
@@ -126,6 +117,9 @@ public class Tank2D extends GameScreen {
                             mapBrick.remove(j);
                             needRemoveBullet = true;
                             System.out.println("Va cham brick001 - bullet");
+
+                            newExposion(bulletNow);
+
                             break;
                         }
                         case BRICK002 -> {
@@ -146,12 +140,12 @@ public class Tank2D extends GameScreen {
                             break;
                         }
                     }
-
-                    if (needRemoveBullet){
-                        bulletList.remove(i);
-                        break;
-                    }
                 }
+            }
+
+            if (needRemoveBullet){
+                bulletList.remove(i);
+                break;
             }
         }
     }
@@ -160,55 +154,58 @@ public class Tank2D extends GameScreen {
     public void GAME_UPDATE(long deltaTime) {
         CollisionHandling();
 
+
         // player
-        Player.getInstance().update(deltaTime);
+        Player.getInstance().Update(deltaTime);
 
         // player2
-        Player2.getInstance().getAnimation().Update_Me(deltaTime);
 
         // enemy
         enemy001.update(deltaTime);
 
         // bullet
-        bullet001.update(deltaTime);
+        bullet001.Update(deltaTime);
 
         for (int i = 0; i < bulletList.size(); i++){
-            bulletList.get(i).update(deltaTime);
+            bulletList.get(i).Update(deltaTime);
+        }
+
+        for (int i = 0; i < explosionList.size(); i++){
+            explosionList.get(i).Update(deltaTime);
         }
     }
 
     @Override
     public void GAME_PAINT(Graphics2D g2) {
-        //g2.setColor(Color.LIGHT_GRAY);
         g2.setColor(BACKGROUND_GAME_COLOR);
         g2.fillRect(0, 0, MAP_WIDTH_TILE * PIXEL, MAP_HEIGHT_TILE * PIXEL);
 
-        Player.getInstance().paint(g2);
+        Player.getInstance().Paint(g2);
 
         for (int i = 0; i < mapBrick.size(); i++)
         {
-            PAINT_OBJECT(g2, mapBrick.get(i));
+            mapBrick.get(i).Paint(g2);
         }
 
 
         //region Test
         // player
         PAINT_OBJECT(g2, Al);
-        // player2
-        Player2.getInstance().getAnimation().PaintAnims(Player2.getInstance().getPosX(), Player2.getInstance().getPosY(), Player2.getInstance().getImgTanks(), g2, 0, Player2.getInstance().getRotation().getRotate());
 
         // enemy
-        //enemy001.getAnimation().PaintAnims(enemy001.getPosX(), enemy001.getPosY(), enemy001.getImgTanks(), g2, 0, enemy001.getRotation().getRotate());
-        enemy001.paint(g2);
+        enemy001.Paint(g2);
 
         // bullet
-        bullet001.getAnimation().PaintAnims(bullet001.getPosX(), bullet001.getPosY(), bullet001.getImg(), g2, 0, bullet001.getRotation().getRotate());
+        bullet001.Paint(g2);
 
         for (int i = 0; i < bulletList.size(); i++){
             Bullet bulletNow = bulletList.get(i);
-            bulletNow.getAnimation().PaintAnims(bulletNow.getPosX(), bulletNow.getPosY(), bulletNow.getImg(), g2, 0, bulletNow.getRotation().getRotate());
+            bulletNow.Paint(g2);
         }
 
+        for (int i = 0; i < explosionList.size(); i++){
+            explosionList.get(i).Paint(g2);
+        }
         //endregion
     }
 
@@ -217,44 +214,60 @@ public class Tank2D extends GameScreen {
         if (Event == KEY_PRESSED) {
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_LEFT: // left
-                    if (checkCollisionWithBrick(Rotation.LEFT)) {
-                        Player.getInstance().Move(Rotation.LEFT);
+                    if (Player.getInstance().getRotation() != Objects.Rotation.LEFT){
+                        Player.getInstance().setRotation(Objects.Rotation.LEFT);
+                    }
+
+                    if (checkCollisionWithBrick(Objects.Rotation.LEFT)) {
+                        Player.getInstance().Move(Objects.Rotation.LEFT);
                     }
                     break;
                 case KeyEvent.VK_UP: // up
-                    if (checkCollisionWithBrick(Rotation.UP)) {
-                        Player.getInstance().Move(Rotation.UP);
+                    if (Player.getInstance().getRotation() != Objects.Rotation.UP){
+                        Player.getInstance().setRotation(Objects.Rotation.UP);
+                    }
+
+                    if (checkCollisionWithBrick(Objects.Rotation.UP)) {
+                        Player.getInstance().Move(Objects.Rotation.UP);
                     }
                     break;
                 case KeyEvent.VK_RIGHT: // right
-                    if (checkCollisionWithBrick(Rotation.RIGHT)) {
-                        Player.getInstance().Move(Rotation.RIGHT);
+                    if (Player.getInstance().getRotation() != Objects.Rotation.RIGHT){
+                        Player.getInstance().setRotation(Objects.Rotation.RIGHT);
+                    }
+
+                    if (checkCollisionWithBrick(Objects.Rotation.RIGHT)) {
+                        Player.getInstance().Move(Objects.Rotation.RIGHT);
                     }
                     break;
                 case KeyEvent.VK_DOWN: // down
-                    if (checkCollisionWithBrick(Rotation.DOWN)) {
-                        Player.getInstance().Move(Rotation.DOWN);
+                    if (Player.getInstance().getRotation() != Objects.Rotation.DOWN){
+                        Player.getInstance().setRotation(Objects.Rotation.DOWN);
+                    }
+
+                    if (checkCollisionWithBrick(Objects.Rotation.DOWN)) {
+                        Player.getInstance().Move(Objects.Rotation.DOWN);
                     }
                     break;
                 case KeyEvent.VK_A: // A (left for player 2)
-                    Player2.getInstance().setState(State.RUN);
-                    Player2.getInstance().setRotation(Rotation.LEFT);
-                    Player2.getInstance().setPosX(Player2.instance.getPosX() - 10);
+//                    Player2.getInstance().setState(Objects.State.RUN);
+//                    Player2.getInstance().setRotation(Objects.Rotation.LEFT);
+//                    Player2.getInstance().setPosX(Player2.instance.getPosX() - 10);
                     break;
                 case KeyEvent.VK_W: // W (up for player 2)
-                    Player2.getInstance().setState(State.RUN);
-                    Player2.getInstance().setRotation(Rotation.UP);
-                    Player2.getInstance().setPosY(Player2.instance.getPosY()-10);
+//                    Player2.getInstance().setState(Objects.State.RUN);
+//                    Player2.getInstance().setRotation(Objects.Rotation.UP);
+//                    Player2.getInstance().setPosY(Player2.instance.getPosY()-10);
                     break;
                 case KeyEvent.VK_D: // D (right for player 2)
-                    Player2.getInstance().setState(State.RUN);
-                    Player2.getInstance().setRotation(Rotation.RIGHT);
-                    Player2.getInstance().setPosX(Player2.instance.getPosX()+10);
+//                    Player2.getInstance().setState(Objects.State.RUN);
+//                    Player2.getInstance().setRotation(Objects.Rotation.RIGHT);
+//                    Player2.getInstance().setPosX(Player2.instance.getPosX()+10);
                     break;
                 case KeyEvent.VK_S: // S (down for player 2)
-                    Player2.getInstance().setState(State.RUN);
-                    Player2.getInstance().setRotation(Rotation.DOWN);
-                    Player2.getInstance().setPosY(Player2.instance.getPosY()+10);
+//                    Player2.getInstance().setState(Objects.State.RUN);
+//                    Player2.getInstance().setRotation(Objects.Rotation.DOWN);
+//                    Player2.getInstance().setPosY(Player2.instance.getPosY()+10);
                     break;
                 case KeyEvent.VK_SPACE:
 //                    Bullet b = new Bullet(Player.getInstance().getPosX(), Player.getInstance().getPosX(), Player.getInstance().getRotation());
@@ -268,9 +281,9 @@ public class Tank2D extends GameScreen {
         }
         if (Event == KEY_RELEASED)
         {
-            Player.getInstance().setState(State.IDLE);
+            Player.getInstance().setState(Objects.State.IDLE);
             // player2
-            Player2.getInstance().setState(State.IDLE);
+            //Player2.getInstance().setState(Objects.State.IDLE);
         }
 
     }
