@@ -75,12 +75,12 @@ public class Map {
 
     int getTilePosX(int tileNumber)
     {
-        return tileNumber % MAP_WIDTH_TILE * PIXEL;
+        return (tileNumber % MAP_WIDTH_TILE + 2) * PIXEL;
     }
 
     int getTilePosY(int tileNumber)
     {
-        return tileNumber / MAP_WIDTH_TILE * PIXEL;
+        return (tileNumber / MAP_WIDTH_TILE + 2) * PIXEL;
     }
 
     public ArrayList<Brick> getBrickListMap1()

@@ -25,8 +25,8 @@ public class Player extends Objects {
     static final int PLAYER_WIDTH = 30;
     static final int PLAYER_HEIGHT = 32;
     static final int PLAYER_MOVE = 8;
-    static final int X_DEFAULT_LOCATION = PIXEL * 8;
-    static final int Y_DEFAULT_LOCATION = PIXEL * (26 - 2);
+    static final int X_DEFAULT_LOCATION = PIXEL * 11;
+    static final int Y_DEFAULT_LOCATION = PIXEL * (30 - 4);
     static final State DEFAULT_STATE = State.IDLE;
     static final Rotation DEFAULT_ROTATION = Rotation.UP;
 
@@ -49,6 +49,8 @@ public class Player extends Objects {
 
         Reset();
     }
+
+
     public Bullet createNewBullet(){
         int xBullet = 0;
         int yBullet = 0;
@@ -80,18 +82,18 @@ public class Player extends Objects {
     }
     public void Update(long deltaTime){
         this.getAnimation().Update_Me(deltaTime);
-        if (this.shield.isActive()){
-            this.shield.Update(deltaTime);
-        }
+//        if (this.shield.isActive()){
+//            this.shield.Update(deltaTime);
+//        }
     }
     public  boolean checkBoundX(int PosX) {
-        if (PosX < 0 || PosX > PIXEL * Tank2D.MAP_WIDTH_TILE - PLAYER_WIDTH)
+        if (PosX < PIXEL * 2 || PosX > PIXEL * (Tank2D.MAP_WIDTH_TILE + 2) - PLAYER_WIDTH)
             return false;
         return true;
     }
 
     public  boolean checkBoundY(int PosY) {
-        if (PosY < 0 || PosY > PIXEL * Tank2D.MAP_HEIGHT_TILE - PLAYER_HEIGHT)
+        if (PosY < PIXEL * 2 || PosY > PIXEL * (Tank2D.MAP_HEIGHT_TILE + 2) - PLAYER_HEIGHT)
             return false;
         return true;
     }
@@ -115,14 +117,14 @@ public class Player extends Objects {
                 break;
         }
 
-        this.shield.setPos(this.getPosX() - 2, this.getPosY() + 1);
+        //this.shield.setPos(this.getPosX() - 2, this.getPosY() + 1);
     }
 
     //region Move method
     public Point get_Left_Location(){
         int x = Player.instance.getPosX() - PLAYER_MOVE;
         if (!checkBoundX(x)){
-            x = 0;
+            x = PIXEL * 2;
         }
         int y = this.getPosY();
 
@@ -132,7 +134,7 @@ public class Player extends Objects {
         int y = Player.instance.getPosY() - PLAYER_MOVE;
 
         if (!checkBoundY(y)) {
-            y = 0;
+            y = PIXEL * 2;
         }
 
         int x = this.getPosX();
@@ -143,7 +145,7 @@ public class Player extends Objects {
         int x = Player.instance.getPosX() + PLAYER_MOVE;;
 
         if (!checkBoundX(x)){
-            x = (PIXEL * Tank2D.MAP_WIDTH_TILE - PLAYER_WIDTH);
+            x = (PIXEL * (Tank2D.MAP_WIDTH_TILE + 2) - PLAYER_WIDTH);
         }
 
         int y = this.getPosY();
@@ -154,7 +156,7 @@ public class Player extends Objects {
         int y = Player.instance.getPosY() + PLAYER_MOVE;
 
         if (!checkBoundY(y)){
-            y = (PIXEL * Tank2D.MAP_HEIGHT_TILE - PLAYER_HEIGHT);
+            y = (PIXEL * (Tank2D.MAP_HEIGHT_TILE + 2) - PLAYER_HEIGHT);
         }
 
         int x = this.getPosX();
@@ -187,15 +189,15 @@ public class Player extends Objects {
     public void Reset() throws IOException {
         super.Reset(X_DEFAULT_LOCATION, Y_DEFAULT_LOCATION, DEFAULT_STATE, DEFAULT_ROTATION);
 
-        timer.schedule(timerTask, Shield.SHIELD_ACTIVE_TIME);
-        this.shield = new Shield(this.getPosX() - 2, this.getPosY() + 1);
+//        timer.schedule(timerTask, Shield.SHIELD_ACTIVE_TIME);
+//        this.shield = new Shield(this.getPosX() - 2, this.getPosY() + 1);
     }
     public void Paint(Graphics2D g2){
         super.Paint(g2);
 
-        if (this.getShield().isActive()){
-            this.getShield().Paint(g2);
-        }
+//        if (this.getShield().isActive()){
+//            this.getShield().Paint(g2);
+//        }
     }
     //region Getter and Setter
     public Shield getShield() {

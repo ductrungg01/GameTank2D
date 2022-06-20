@@ -76,8 +76,8 @@ public class Alphabet extends Objects {
     private static final Rotation DEFAULT_ROTATION = Rotation.UP;
     private TypeOfAlphabet type;
 
-    Alphabet(TypeOfAlphabet type, int x, int y, int w, int h){
-        super(x, y, w, h, DEFAULT_STATE, DEFAULT_ROTATION);
+    Alphabet(TypeOfAlphabet type, int x, int y){
+        super(x, y, ALPHABET_WIDTH, ALPHABET_HEIGHT, DEFAULT_STATE, DEFAULT_ROTATION);
 
         this.type = type;
 
@@ -216,88 +216,93 @@ public class Alphabet extends Objects {
                 yOnImg = 992;
                 break;
             }
-            case ONE -> {
+            case ZERO -> {
                 xOnImg = 16 * 0;
                 yOnImg = 1008;
                 break;
             }
-            case TWO -> {
+            case ONE -> {
                 xOnImg = 16 * 1;
                 yOnImg = 1008;
                 break;
             }
-            case THREE -> {
+            case TWO -> {
                 xOnImg = 16 * 2;
                 yOnImg = 1008;
                 break;
             }
-            case FOUR -> {
+            case THREE -> {
                 xOnImg = 16 * 3;
                 yOnImg = 1008;
                 break;
             }
-            case FIVE -> {
+            case FOUR -> {
                 xOnImg = 16 * 4;
                 yOnImg = 1008;
                 break;
             }
-            case SIX -> {
+            case FIVE -> {
                 xOnImg = 16 * 5;
                 yOnImg = 1008;
                 break;
             }
-            case SEVEN -> {
+            case SIX -> {
                 xOnImg = 16 * 6;
                 yOnImg = 1008;
                 break;
             }
-            case EIGHT -> {
+            case SEVEN -> {
                 xOnImg = 16 * 7;
                 yOnImg = 1008;
                 break;
             }
-            case NINE -> {
+            case EIGHT -> {
                 xOnImg = 16 * 8;
                 yOnImg = 1008;
                 break;
             }
-            case DOT -> {
+            case NINE -> {
                 xOnImg = 16 * 9;
                 yOnImg = 1008;
                 break;
             }
-            case COMMA -> {
+            case DOT -> {
                 xOnImg = 16 * 11;
                 yOnImg = 1008;
                 break;
             }
-            case FSLASH -> {
+            case COMMA -> {
                 xOnImg = 16 * 12;
                 yOnImg = 1008;
                 break;
             }
-            case BSLASH -> {
+            case FSLASH -> {
                 xOnImg = 16 * 13;
                 yOnImg = 1008;
                 break;
             }
-            case STRAIGHT -> {
+            case BSLASH -> {
                 xOnImg = 16 * 14;
                 yOnImg = 1008;
                 break;
             }
-            case DASH -> {
+            case STRAIGHT -> {
                 xOnImg = 16 * 15;
                 yOnImg = 1008;
                 break;
             }
-            case MORE -> {
+            case DASH -> {
                 xOnImg = 16 * 16;
                 yOnImg = 1008;
                 break;
             }
-            case LESS -> {
+            case MORE -> {
                 xOnImg = 16 * 17;
+                yOnImg = 1008;
+                break;
+            }
+            case LESS -> {
+                xOnImg = 16 * 18;
                 yOnImg = 1008;
                 break;
             }
