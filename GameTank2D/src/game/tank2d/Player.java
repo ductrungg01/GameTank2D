@@ -9,8 +9,6 @@ import java.util.TimerTask;
 
 import static game.tank2d.Tank2D.PIXEL;
 
-
-
 public class Player extends Objects {
     private Shield shield;
     static Player instance;
@@ -39,7 +37,8 @@ public class Player extends Objects {
     }
 
     private Player() throws IOException {
-        super(X_DEFAULT_LOCATION, Y_DEFAULT_LOCATION, PLAYER_WIDTH, PLAYER_HEIGHT, DEFAULT_STATE, DEFAULT_ROTATION);
+        super(X_DEFAULT_LOCATION, Y_DEFAULT_LOCATION, PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_MOVE, DEFAULT_STATE, DEFAULT_ROTATION);
+        this.needCheckBound = true;
 
         //// IDLE
         setAnimation(100, 0, 0, PLAYER_WIDTH, PLAYER_HEIGHT);
@@ -49,8 +48,6 @@ public class Player extends Objects {
 
         Reset();
     }
-
-
     public Bullet createNewBullet(){
         int xBullet = 0;
         int yBullet = 0;
@@ -86,100 +83,12 @@ public class Player extends Objects {
 //            this.shield.Update(deltaTime);
 //        }
     }
-    public  boolean checkBoundX(int PosX) {
-        if (PosX < PIXEL * 2 || PosX > PIXEL * (Tank2D.MAP_WIDTH_TILE + 2) - PLAYER_WIDTH)
-            return false;
-        return true;
-    }
-
-    public  boolean checkBoundY(int PosY) {
-        if (PosY < PIXEL * 2 || PosY > PIXEL * (Tank2D.MAP_HEIGHT_TILE + 2) - PLAYER_HEIGHT)
-            return false;
-        return true;
-    }
-
     public void Move(Rotation rotation){
-        this.setRotation(rotation);
-        this.setState(State.RUN);
-
-        switch (rotation){
-            case UP:
-                Go_Up();
-                break;
-            case DOWN:
-                Go_Down();
-                break;
-            case RIGHT:
-                Go_Right();
-                break;
-            case LEFT:
-                Go_Left();
-                break;
-        }
+        super.Move(this.rotation);
 
         //this.shield.setPos(this.getPosX() - 2, this.getPosY() + 1);
     }
 
-    //region Move method
-    public Point get_Left_Location(){
-        int x = Player.instance.getPosX() - PLAYER_MOVE;
-        if (!checkBoundX(x)){
-            x = PIXEL * 2;
-        }
-        int y = this.getPosY();
-
-        return new Point(x, y);
-    }
-    public Point get_Up_Location(){
-        int y = Player.instance.getPosY() - PLAYER_MOVE;
-
-        if (!checkBoundY(y)) {
-            y = PIXEL * 2;
-        }
-
-        int x = this.getPosX();
-
-        return new Point(x, y);
-    }
-    public Point get_Right_Location(){
-        int x = Player.instance.getPosX() + PLAYER_MOVE;;
-
-        if (!checkBoundX(x)){
-            x = (PIXEL * (Tank2D.MAP_WIDTH_TILE + 2) - PLAYER_WIDTH);
-        }
-
-        int y = this.getPosY();
-
-        return new Point(x, y);
-    }
-    public Point get_Down_Location(){
-        int y = Player.instance.getPosY() + PLAYER_MOVE;
-
-        if (!checkBoundY(y)){
-            y = (PIXEL * (Tank2D.MAP_HEIGHT_TILE + 2) - PLAYER_HEIGHT);
-        }
-
-        int x = this.getPosX();
-
-        return new Point(x, y);
-    }
-    void Go_Left(){
-        Point p = get_Left_Location();
-        this.setPos(p.x, p.y);
-    }
-    void Go_Up(){
-        Point p = get_Up_Location();
-        this.setPos(p.x, p.y);
-    }
-    void Go_Right(){
-        Point p = get_Right_Location();
-        this.setPos(p.x, p.y);
-    }
-    void Go_Down(){
-        Point p = get_Down_Location();
-        this.setPos(p.x, p.y);
-    }
-    //endregion
     public void Dead(){
         this.timer.cancel();
     }
@@ -199,6 +108,7 @@ public class Player extends Objects {
 //            this.getShield().Paint(g2);
 //        }
     }
+
     //region Getter and Setter
     public Shield getShield() {
         return shield;

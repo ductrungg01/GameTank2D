@@ -27,7 +27,7 @@ public class Enemy extends Objects {
     public static final int ENEMY_WIDTH = 26;
     public static final int ENEMY_HEIGHT = 30;
     private static final State DEFAULT_STATE = State.IDLE;
-    private static final int ENEMY_MOVE_SPEED = 1;
+    private static final int ENEMY_MOVE = 1;
     private TypeOfEnemy type;
     private EnemyAppear enemyAppear;
     private Timer timer = new Timer();
@@ -39,7 +39,7 @@ public class Enemy extends Objects {
         }
     };
     Enemy(TypeOfEnemy type, int x, int y, Rotation rotation) {
-        super(x, y, ENEMY_WIDTH, ENEMY_HEIGHT, DEFAULT_STATE, rotation);
+        super(x, y, ENEMY_WIDTH, ENEMY_HEIGHT, ENEMY_MOVE, DEFAULT_STATE, rotation);
 
         this.timer.schedule(timerTask, EnemyAppear.ENEMYAPPEAR_ACTIVE_TIME);
         this.enemyAppear = new EnemyAppear(this.getPosX(), this.getPosY());
@@ -75,9 +75,7 @@ public class Enemy extends Objects {
         if (this.enemyAppear.isActive){
             this.enemyAppear.Update(deltaTime);
         } else {
-            Rotation rotation = this.getRotation();
-
-            Move(this.rotation, ENEMY_MOVE_SPEED);
+            Move(this.rotation);
 
             this.getAnimation().Update_Me(deltaTime);
         }

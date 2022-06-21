@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package pkg2dgamesframework;
 
 import java.awt.Graphics2D;
@@ -11,10 +6,6 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import javax.swing.JFrame;
 
-/**
- *
- * @author phamn
- */
 public abstract class GameScreen extends JFrame implements KeyListener{
 
     public static int KEY_PRESSED = 0;

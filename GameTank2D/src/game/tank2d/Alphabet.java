@@ -1,15 +1,6 @@
 package game.tank2d;
 
-import pkg2dgamesframework.AFrameOnImage;
-import pkg2dgamesframework.Animation;
 import pkg2dgamesframework.Objects;
-
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 enum TypeOfAlphabet {
     A(1),
@@ -77,7 +68,7 @@ public class Alphabet extends Objects {
     private TypeOfAlphabet type;
 
     Alphabet(TypeOfAlphabet type, int x, int y){
-        super(x, y, ALPHABET_WIDTH, ALPHABET_HEIGHT, DEFAULT_STATE, DEFAULT_ROTATION);
+        super(x, y, ALPHABET_WIDTH, ALPHABET_HEIGHT, 0, DEFAULT_STATE, DEFAULT_ROTATION);
 
         this.type = type;
 

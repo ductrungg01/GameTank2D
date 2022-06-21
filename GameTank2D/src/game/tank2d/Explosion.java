@@ -26,7 +26,7 @@ public class Explosion extends Objects {
 
 
     Explosion(int x, int y){
-        super(x, y, EXPLOSION_WIDTH, EXPLOSION_HEIGHT, DEFAULT_STATE, DEFAULT_ROTATION);
+        super(x, y, EXPLOSION_WIDTH, EXPLOSION_HEIGHT, 0, DEFAULT_STATE, DEFAULT_ROTATION);
 
         timer.schedule(timerTask, EXPLOSION_ACTIVE_TIME);
 

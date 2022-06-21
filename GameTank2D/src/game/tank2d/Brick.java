@@ -1,16 +1,6 @@
 package game.tank2d;
 
-import pkg2dgamesframework.AFrameOnImage;
-import pkg2dgamesframework.Animation;
 import pkg2dgamesframework.Objects;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 enum TypeOfBrick{
     BRICK000(0),
@@ -39,7 +29,7 @@ public class Brick extends Objects {
     private TypeOfBrick type;
 
     Brick(TypeOfBrick type, int x, int y, int w, int h){
-        super(x, y, w, h, DEFAULT_STATE, DEFAULT_ROTATION);
+        super(x, y, w, h, 0, DEFAULT_STATE, DEFAULT_ROTATION);
 
         this.type = type;
 

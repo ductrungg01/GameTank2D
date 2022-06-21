@@ -14,7 +14,7 @@ public class EnemyAppear extends Objects {
     public boolean isActive = true;
 
     EnemyAppear(int x, int y){
-        super(x, y, ENEMYAPPEAR_WIDTH, ENEMYAPPEAR_HEIGHT, DEFAULT_STATE, DEFAULT_ROTATION);
+        super(x, y, ENEMYAPPEAR_WIDTH, ENEMYAPPEAR_HEIGHT, 0, DEFAULT_STATE, DEFAULT_ROTATION);
 
         super.setAnimation(100, 255, 30, ENEMYAPPEAR_WIDTH, ENEMYAPPEAR_HEIGHT,
                 33, 0, 6);

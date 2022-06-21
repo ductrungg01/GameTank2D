@@ -5,7 +5,7 @@
  */
 package pkg2dgamesframework;
 
-import game.tank2d.Shield;
+import game.tank2d.Tank2D;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -14,6 +14,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static game.tank2d.Tank2D.PIXEL;
 
 
 public class Objects {
@@ -50,23 +52,29 @@ public class Objects {
 
     protected Point pos;
     protected int w, h;
+    protected boolean needCheckBound = false;
+    protected final int OBJECT_MOVE;
     protected BufferedImage image;
     public static final String DEFAULT_LINK_IMAGE = "Assets/sprite.PNG";
     protected Rectangle rect;
     protected List<Animation> animation = new ArrayList<Animation>();
     protected Rotation rotation;
     protected State state;
-    public Objects(){
-         pos.x = pos.y = w = h = 0;
+
+    //region Constructor
+    public Objects(int object_move){
+        OBJECT_MOVE = object_move;
+        pos.x = pos.y = w = h = 0;
     }
-    
-    public Objects(int x, int y, int w, int h){
+    public Objects(int x, int y, int w, int h, int object_move){
+        OBJECT_MOVE = object_move;
         this.pos = new Point(x, y);
         this.w = w;
         this.h = h;
         this.setRect(new Rectangle(x, y, w, h));
     }
-    public Objects(int x, int y, int w, int h, State state, Rotation rotation, BufferedImage image){
+    public Objects(int x, int y, int w, int h, int object_move, State state, Rotation rotation, BufferedImage image){
+        OBJECT_MOVE = object_move;
         this.pos = new Point(x, y);
         this.w = w;
         this.h = h;
@@ -75,7 +83,8 @@ public class Objects {
         this.image = image;
         this.setRect(new Rectangle(x, y, w, h));
     }
-    public Objects(int x, int y, int w, int h, State state, Rotation rotation, String image){
+    public Objects(int x, int y, int w, int h, State state, Rotation rotation, String image, int object_move){
+        OBJECT_MOVE = object_move;
         this.pos = new Point(x, y);
         this.w = w;
         this.h = h;
@@ -84,7 +93,8 @@ public class Objects {
         setImage(image);
         this.setRect(new Rectangle(x, y, w, h));
     }
-    public Objects(int x, int y, int w, int h, State state, Rotation rotation){
+    public Objects(int x, int y, int w, int h, int object_move, State state, Rotation rotation){
+        OBJECT_MOVE = object_move;
         this.pos = new Point(x, y);
         this.w = w;
         this.h = h;
@@ -93,6 +103,93 @@ public class Objects {
         setImage(DEFAULT_LINK_IMAGE);
         this.setRect(new Rectangle(x, y, w, h));
     }
+    //endregion
+
+    //region Move
+    public Point getNextPos(Rotation rotation){
+        int x = pos.x;
+        int y = pos.y;
+
+        switch (rotation){
+            case UP:
+                y -= OBJECT_MOVE;
+                break;
+            case DOWN:
+                y += OBJECT_MOVE;
+                break;
+            case LEFT:
+                x -= OBJECT_MOVE;
+                break;
+            case RIGHT:
+                x += OBJECT_MOVE;
+                break;
+        }
+
+        if (this.needCheckBound){
+            return getNewPointAfterCheckBound(rotation, new Point(x, y));
+        }
+
+        return new Point(x, y);
+    }
+    public void Move(Rotation rotation){
+        this.rotation = rotation;
+        this.state = State.RUN;
+
+        Point nextPos = getNextPos(rotation);
+
+        setPos(nextPos);
+
+        updateRect();
+    }
+    //endregion
+
+    //region Check bound
+    public  boolean checkBoundX(int posX) {
+        if (posX < PIXEL * 2 || posX > PIXEL * (Tank2D.MAP_WIDTH_TILE + 2) - this.w)
+            return false;
+        return true;
+    }
+
+    public  boolean checkBoundY(int posY) {
+        if (posY < PIXEL * 2 || posY > PIXEL * (Tank2D.MAP_HEIGHT_TILE + 2) - this.h)
+            return false;
+        return true;
+    }
+    public Point getNewPointAfterCheckBound(Rotation rotation, Point p){
+        int x = p.x;
+        int y = p.y;
+
+        switch (rotation){
+            case UP -> {
+                if (!checkBoundY(y)){
+                    y = PIXEL * 2;
+                }
+                break;
+            }
+            case DOWN -> {
+                if (!checkBoundY(y)){
+                    y = (PIXEL * (Tank2D.MAP_HEIGHT_TILE + 2) - this.h);
+                }
+                break;
+            }
+            case LEFT -> {
+                if (!checkBoundX(x)){
+                    x = PIXEL * 2;
+                }
+                break;
+            }
+            case RIGHT -> {
+                if (!checkBoundX(x)){
+                    x = (PIXEL * (Tank2D.MAP_WIDTH_TILE + 2) - this.w);
+                }
+                break;
+            }
+        }
+
+        return new Point(x, y);
+    }
+    //endregion
+
     public void Reset(int x, int y, State state, Rotation rotation){
         this.pos = new Point(x, y);
         this.state = state;
@@ -100,51 +197,19 @@ public class Objects {
         this.rect.setLocation(x, y);
     }
     public void Paint(Graphics2D g2){
-        this.getAnimation().PaintAnims(this.getPosX(), this.getPosY(), this.getImage(), g2, 0, this.getRotation().getRotate());
+        this.getAnimation().PaintAnims(this.getPosX(), this.getPosY(), this.getImage(),
+                g2, 0, this.getRotation().getRotate());
     }
     public void Update(long deltaTime){
         this.getAnimation().Update_Me(deltaTime);
-    }
-    public void Move(Rotation rotation, int distance){
-        this.rotation = rotation;
-
-        switch (rotation){
-            case UP:
-                this.pos.y -= distance;
-                break;
-            case DOWN:
-                this.pos.y += distance;
-                break;
-            case LEFT:
-                this.pos.x -= distance;
-                break;
-            case RIGHT:
-                this.pos.x += distance;
-                break;
-        }
-
-        updateRect();
-    }
-    public boolean isCollisionHappenWith(float x, float y){
-        if(x > pos.x && x < pos.x + w && y > pos.y && y < pos.y + h)
-            return true;
-        return false;
-    }
-    public boolean isCollisionHappenWith(float x, float y, float w, float h){
-        if(x < pos.x + this.w && x + w > pos.x && y < pos.y + this.h && h + y > pos.y)
-            return true;
-        return false;
-    }
-    public void increasePosX(float m){
-        pos.x += m;
-    }
-    public void increasePosY(float m){
-        pos.y += m;
     }
 
     //region Getter and Setter
     public void setPos(int x, int y){
         this.pos = new Point(x, y);
+    }
+    public void setPos(Point p){
+        this.pos = p;
     }
     public void setPosX(int x){
         this.pos.x = x;
@@ -168,12 +233,6 @@ public class Objects {
     }
     public void updateRect(){
         this.rect.setLocation(pos.x, pos.y);
-    }
-    public float getW(){
-        return w;
-    }
-    public float getH(){
-        return h;
     }
     public BufferedImage getImage() {
         return image;
@@ -221,6 +280,10 @@ public class Objects {
     }
     public void setRotation(Rotation rotation) {
         this.rotation = rotation;
+
+//        if (this.needCheckBound){
+//            setPos(getNewPointAfterCheckBound(this.rotation, this.pos));
+//        }
     }
     public State getState() {
         return state;

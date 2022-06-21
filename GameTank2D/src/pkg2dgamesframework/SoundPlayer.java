@@ -11,10 +11,6 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
-/**
- *
- * @author phamn
- */
 public class SoundPlayer {
     
     private Clip clip;

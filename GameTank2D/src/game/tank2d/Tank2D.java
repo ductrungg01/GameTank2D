@@ -104,26 +104,7 @@ public class Tank2D extends GameScreen {
         explosionList.add(bullet.createNewExplosion());
     }
     boolean checkCollisionWithBrick(Objects.Rotation rotation){
-        Point p = new Point(0, 0);
-
-        switch (rotation){
-            case UP -> {
-                p = Player.getInstance().get_Up_Location();
-                break;
-            }
-            case DOWN -> {
-                p = Player.getInstance().get_Down_Location();
-                break;
-            }
-            case LEFT -> {
-                p = Player.getInstance().get_Left_Location();
-                break;
-            }
-            case RIGHT -> {
-                p = Player.getInstance().get_Right_Location();
-                break;
-            }
-        }
+        Point p = Player.getInstance().getNextPos(rotation);
 
         for (int i = 0; i < mapBrick.size(); i++){
             Rectangle brickRectNow = mapBrick.get(i).getRect();

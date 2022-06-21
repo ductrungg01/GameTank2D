@@ -5,10 +5,6 @@
  */
 package pkg2dgamesframework;
 
-/**
- *
- * @author phamn
- */
 public class QueueList <T> {
     
     private Element head, foot;

@@ -21,6 +21,7 @@ public class Player2 extends Objects {
 
     private Player2() throws IOException {
 
+        super(0);
         Reset();
     }
 
