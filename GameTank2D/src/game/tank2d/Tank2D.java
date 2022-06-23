@@ -28,17 +28,16 @@ public class Tank2D extends GameScreen {
     static Map maps = new Map();
 
     Enemy enemy001 = new Enemy(TypeOfEnemy.ENEMY004, 50, 16, Objects.Rotation.DOWN);
-    Bullet bullet001 = new Bullet(16, 16, Objects.Rotation.DOWN);
+    Bullet bullet001 = new Bullet(171, 150, Objects.Rotation.DOWN);
     //ArrayList<GameObject> gameObjects = new ArrayList<GameObject>();
     ArrayList<Bullet> bulletList = new ArrayList<Bullet>();
+    ArrayList<Enemy> enemyList = new ArrayList<Enemy>();
     ArrayList<Explosion> explosionList = new ArrayList<Explosion>();
     //region StartScreen
     StartScreen startScreen = new StartScreen(PIXEL * 4, PIXEL * 8);
     static ArrayList<Alphabet> charList = new ArrayList<Alphabet>();
     static int CursorPosition = 20;
     //endregion
-
-
 
     public Tank2D() {
         super((MAP_WIDTH_TILE + 6) * PIXEL, (MAP_HEIGHT_TILE + 4) * PIXEL);
@@ -82,8 +81,8 @@ public class Tank2D extends GameScreen {
         mapBrick = maps.getBrickListMap1();
         try {
             Player.getInstance().Reset();
-        }
-        catch (IOException e) {
+            Player.getInstance().StartShield();
+        } catch (IOException e){
             e.printStackTrace();
         }
     }
@@ -92,24 +91,22 @@ public class Tank2D extends GameScreen {
         InitStartScreen();
         GameScreen game = new Tank2D();
     }
-
-    public void PAINT_OBJECT(Graphics2D g2, Brick b) {
-        b.getAnimation().PaintAnims(b.getPosX(), b.getPosY(), b.getImage(), g2, 0, b.getRotation().getRotate());
-    }
-
-    public void PAINT_OBJECT(Graphics2D g2, Alphabet b) {
-        b.getAnimation().PaintAnims(b.getPosX(), b.getPosY(), b.getImage(), g2, 0, b.getRotation().getRotate());
-    }
-    public void newExposion(Bullet bullet){
+    public void newExplosion(Bullet bullet){
         explosionList.add(bullet.createNewExplosion());
     }
-    boolean checkCollisionWithBrick(Objects.Rotation rotation){
-        Point p = Player.getInstance().getNextPos(rotation);
+    public void newExplosion(int x, int y){
+        explosionList.add(new Explosion(x, y));
+    }
 
+    // Cái này chỉ là kiểm tra xem vị trí TIẾP THEO (trong tương lai) có hợp lệ hay không?
+    boolean checkNextPosIsWrong(Objects.Rotation rotation, Objects o){
+        // Vị trí tiếp theo trong tương lai
+        Point p = o.getNextPos(rotation);
+        Rectangle pRect = new Rectangle(p.x, p.y, PLAYER_WIDTH, PLAYER_HEIGHT);
+
+        //region Kiểm tra với brick
         for (int i = 0; i < mapBrick.size(); i++){
-            Rectangle brickRectNow = mapBrick.get(i).getRect();
-            Rectangle futurePlayerRect = new Rectangle(p.x, p.y, PLAYER_WIDTH, PLAYER_HEIGHT);
-            if (brickRectNow.intersects(futurePlayerRect)){
+            if (mapBrick.get(i).checkCollision(pRect)){
                 switch (mapBrick.get(i).getType()){
                     case BRICK001, BRICK002 -> {
                         return false;
@@ -120,36 +117,37 @@ public class Tank2D extends GameScreen {
                 }
             }
         }
+        //endregion
+
+        //region
+        for (int i = 0; i < enemyList.size(); i++){
+            if (enemyList.get(i).checkCollision(pRect)){
+                return false;
+            }
+        }
+        //endregion
 
         return true;
     }
+
     public void CollisionHandling(){
-        // Collision handling: BRICK AND BULLET
+        //region Bullet vs Brick
         for (int i = 0; i < bulletList.size(); i++){
-
             Bullet bulletNow = bulletList.get(i);
-            Rectangle bulletRectNow = bulletNow.getRect();
-
             boolean needRemoveBullet = false;
 
             for (int j = 0; j < mapBrick.size(); j++){
-
                 Brick brickNow = mapBrick.get(j);
-                Rectangle brickRectNow = brickNow.getRect();
-
-                if (bulletRectNow.intersects(brickRectNow)){
-
+                if (bulletNow.checkCollision(brickNow)){
                     switch (brickNow.getType()){
                         case BRICK000 -> {
                             break;
                         }
                         case BRICK001 -> {
-                            mapBrick.remove(j);
+                            brickNow.Destroy();
                             needRemoveBullet = true;
                             System.out.println("Va cham brick001 - bullet");
-
-                            newExposion(bulletNow);
-
+                            newExplosion(bulletNow);
                             break;
                         }
                         case BRICK002 -> {
@@ -174,35 +172,111 @@ public class Tank2D extends GameScreen {
             }
 
             if (needRemoveBullet){
-                bulletList.remove(i);
+                bulletNow.Destroy();
                 break;
             }
         }
+        //endregion
+
+        //region Bullet vs Player
+        for (int i = 0; i < bulletList.size(); i++){
+            Bullet bulletNow = bulletList.get(i);
+            // Nếu có va chạm
+            if (Player.getInstance().checkCollision(bulletNow)){
+                // nếu còn khiên
+                if (Player.getInstance().getShield().isActive()){
+                    // Do nothing
+                } else {
+                    Player.getInstance().Destroy();
+                    System.out.println("PLAYER DIED, GAME OVER!");
+                }
+
+                newExplosion(bulletNow);
+                bulletNow.Destroy();
+            }
+        }
+        //endregion
+
+        //region Bullet vs Enemy
+        for (int i = 0; i < bulletList.size(); i++){
+            Bullet bulletNow = bulletList.get(i);
+            for (int j = 0; j < enemyList.size(); j++){
+                Enemy enemyNow = enemyList.get(j);
+                // Nếu có va chạm
+                if (enemyNow.checkCollision(bulletNow)){
+                    // Nếu enemy chưa xuất hiện (chỉ hiển thị hiệu ứng)
+                    if (enemyNow.getEnemyAppear().isActive){
+                        // do nothing
+                    } else {
+                        enemyNow.Destroy();
+                        System.out.println("Enemy detroyed");
+                    }
+
+                    newExplosion(bulletNow);
+                    bulletNow.Destroy();
+                }
+            }
+        }
+        //endregion
+
+        //region Bullet vs Bullet
+        for (int i = 0; i < bulletList.size(); i++){
+            for (int j = i + 1; j < bulletList.size(); j++){
+                if (bulletList.get(i).checkCollision(bulletList.get(j))){
+                    bulletList.get(i).Destroy();
+                    bulletList.get(j).Destroy();
+                    System.out.println("va chạm bullet vs bullet");
+                }
+            }
+        }
+        //endregion
+
+        //region Enemy vs Player
+        for (int i = 0; i < enemyList.size(); i++){
+            Enemy enemyNow = enemyList.get(i);
+
+            // nếu có va chạm
+            if (Player.getInstance().checkCollision(enemyNow)){
+                // nếu enemy chưa xuất hiện hoặc Player còn khiên
+                if (enemyNow.getEnemyAppear().isActive || Player.getInstance().getShield().isActive){
+                    // Do nothing
+                } else {
+                    enemyNow.Destroy();
+                    Player.getInstance().Destroy();
+                    System.out.println("GAME OVER");
+
+                    newExplosion(Player.getInstance().getPosX() + PLAYER_WIDTH/2,
+                            Player.getInstance().getPosY() + PLAYER_HEIGHT/2);
+                    newExplosion(enemyNow.getPosX() + Enemy.ENEMY_WIDTH/2,
+                            enemyNow.getPosY() + Enemy.ENEMY_HEIGHT/2);
+
+                    break;
+                }
+            }
+        }
+        //endregion
     }
 
     @Override
     public void GAME_UPDATE(long deltaTime) {
-        //CollisionHandling();
-
+        CollisionHandling();
 
         // player
         Player.getInstance().Update(deltaTime);
-//
-//        // player2
-//
-//        // enemy
-//        enemy001.update(deltaTime);
-//
-//        // bullet
-//        bullet001.Update(deltaTime);
 
-//        for (int i = 0; i < bulletList.size(); i++){
-//            bulletList.get(i).Update(deltaTime);
-//        }
-//
-//        for (int i = 0; i < explosionList.size(); i++){
-//            explosionList.get(i).Update(deltaTime);
-//        }
+        if (bulletList.size() != 0){
+            for (int i = 0; i < bulletList.size(); i++){
+                bulletList.get(i).Update(deltaTime);
+            }
+        }
+
+        for (int i = 0; i < explosionList.size(); i++){
+            explosionList.get(i).Update(deltaTime);
+        }
+
+        for (int i = 0; i < enemyList.size(); i++){
+            enemyList.get(i).Update(deltaTime);
+        }
     }
 
     @Override
@@ -228,34 +302,19 @@ public class Tank2D extends GameScreen {
             g2.fillRect(32, 32, (MAP_WIDTH_TILE + 0) * PIXEL, (MAP_HEIGHT_TILE + 0) * PIXEL);
             Player.getInstance().Paint(g2);
 
-            for (int i = 0; i < mapBrick.size(); i++)
-            {
+            for (int i = 0; i < mapBrick.size(); i++) {
                 mapBrick.get(i).Paint(g2);
             }
+            for (int i = 0; i < bulletList.size(); i++){
+                bulletList.get(i).Paint(g2);
+            }
+            for (int i = 0; i < explosionList.size(); i++){
+                explosionList.get(i).Paint(g2);
+            }
+            for (int i = 0; i < enemyList.size(); i++){
+                enemyList.get(i).Paint(g2);
+            }
         }
-
-
-
-        //region Test
-        // player
-//        PAINT_OBJECT(g2, Al);
-//
-//        // enemy
-//        enemy001.Paint(g2);
-//
-//        // bullet
-//        bullet001.Paint(g2);
-
-//        for (int i = 0; i < bulletList.size(); i++){
-//            Bullet bulletNow = bulletList.get(i);
-//            bulletNow.Paint(g2);
-//        }
-//
-//        for (int i = 0; i < explosionList.size(); i++){
-//            explosionList.get(i).Paint(g2);
-//        }
-        //endregion
-        //endregion
     }
 
     @Override
@@ -268,7 +327,7 @@ public class Tank2D extends GameScreen {
                             Player.getInstance().setRotation(Objects.Rotation.LEFT);
                         }
 
-                        if (checkCollisionWithBrick(Objects.Rotation.LEFT)) {
+                        if (checkNextPosIsWrong(Objects.Rotation.LEFT, Player.getInstance())) {
                             Player.getInstance().Move(Objects.Rotation.LEFT);
                         }
                         break;
@@ -277,7 +336,7 @@ public class Tank2D extends GameScreen {
                             Player.getInstance().setRotation(Objects.Rotation.UP);
                         }
 
-                        if (checkCollisionWithBrick(Objects.Rotation.UP)) {
+                        if (checkNextPosIsWrong(Objects.Rotation.UP, Player.getInstance())) {
                             Player.getInstance().Move(Objects.Rotation.UP);
                         }
                         break;
@@ -286,7 +345,7 @@ public class Tank2D extends GameScreen {
                             Player.getInstance().setRotation(Objects.Rotation.RIGHT);
                         }
 
-                        if (checkCollisionWithBrick(Objects.Rotation.RIGHT)) {
+                        if (checkNextPosIsWrong(Objects.Rotation.RIGHT, Player.getInstance())) {
                             Player.getInstance().Move(Objects.Rotation.RIGHT);
                         }
                         break;
@@ -295,34 +354,24 @@ public class Tank2D extends GameScreen {
                             Player.getInstance().setRotation(Objects.Rotation.DOWN);
                         }
 
-                        if (checkCollisionWithBrick(Objects.Rotation.DOWN)) {
+                        if (checkNextPosIsWrong(Objects.Rotation.DOWN, Player.getInstance())) {
                             Player.getInstance().Move(Objects.Rotation.DOWN);
                         }
                         break;
                     case KeyEvent.VK_A: // A (left for player 2)
-//                    Player2.getInstance().setState(Objects.State.RUN);
-//                    Player2.getInstance().setRotation(Objects.Rotation.LEFT);
-//                    Player2.getInstance().setPosX(Player2.instance.getPosX() - 10);
+
                         break;
                     case KeyEvent.VK_W: // W (up for player 2)
-//                    Player2.getInstance().setState(Objects.State.RUN);
-//                    Player2.getInstance().setRotation(Objects.Rotation.UP);
-//                    Player2.getInstance().setPosY(Player2.instance.getPosY()-10);
+
                         break;
                     case KeyEvent.VK_D: // D (right for player 2)
-//                    Player2.getInstance().setState(Objects.State.RUN);
-//                    Player2.getInstance().setRotation(Objects.Rotation.RIGHT);
-//                    Player2.getInstance().setPosX(Player2.instance.getPosX()+10);
+
                         break;
                     case KeyEvent.VK_S: // S (down for player 2)
-//                    Player2.getInstance().setState(Objects.State.RUN);
-//                    Player2.getInstance().setRotation(Objects.Rotation.DOWN);
-//                    Player2.getInstance().setPosY(Player2.instance.getPosY()+10);
+
                         break;
                     case KeyEvent.VK_SPACE:
-//                    Bullet b = new Bullet(Player.getInstance().getPosX(), Player.getInstance().getPosX(), Player.getInstance().getRotation());
-//                    gameObjects.add(b);
-//                    JOptionPane.showMessageDialog(null, gameObjects.size());
+
                         break;
                     case KeyEvent.VK_ENTER:
                         bulletList.add(Player.getInstance().createNewBullet());
@@ -340,8 +389,9 @@ public class Tank2D extends GameScreen {
                             CursorPosition+= 2;
                         break;
                     case KeyEvent.VK_ENTER:
-                        InitLevel1();
                         CurrentScene++;
+                        InitLevel1();
+                        enemyList.add(new Enemy(TypeOfEnemy.ENEMY001, 50, 416, Objects.Rotation.UP));
                         break;
                 }
             }
@@ -354,7 +404,5 @@ public class Tank2D extends GameScreen {
                 //Player2.getInstance().setState(Objects.State.IDLE);
             }
         }
-
-
     }
 }

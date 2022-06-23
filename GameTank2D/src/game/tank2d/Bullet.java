@@ -12,14 +12,15 @@ public class Bullet extends Objects {
         super(x, y, BULLET_WIDTH, BULLET_HEIGHT, BULLET_MOVE, DEFAULT_STATE, rotation);
 
         setAnimation(100, 0, 351, BULLET_WIDTH, BULLET_HEIGHT);
+        setAnimation(100, 0, 351, BULLET_WIDTH, BULLET_HEIGHT);
     }
 
     public void Update(long deltaTime) {
         Move(this.getRotation());
 
-        this.getAnimation().Update_Me(deltaTime);
-
         this.updateRect();
+
+        super.Update(deltaTime);
     }
     public Explosion createNewExplosion(){
         int x = this.getPosX();

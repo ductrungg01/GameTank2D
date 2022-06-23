@@ -35,7 +35,6 @@ public class Enemy extends Objects {
         @Override
         public void run() {
             InactiveAppear();
-            System.out.println("timerTask of enemy");
         }
     };
     Enemy(TypeOfEnemy type, int x, int y, Rotation rotation) {

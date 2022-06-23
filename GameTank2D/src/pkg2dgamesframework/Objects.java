@@ -53,6 +53,7 @@ public class Objects {
     protected Point pos;
     protected int w, h;
     protected boolean needCheckBound = false;
+    public boolean isDestroyAlready = false;
     protected final int OBJECT_MOVE;
     protected BufferedImage image;
     public static final String DEFAULT_LINK_IMAGE = "Assets/sprite.PNG";
@@ -133,7 +134,6 @@ public class Objects {
     }
     public void Move(Rotation rotation){
         this.rotation = rotation;
-        this.state = State.RUN;
 
         Point nextPos = getNextPos(rotation);
 
@@ -197,11 +197,35 @@ public class Objects {
         this.rect.setLocation(x, y);
     }
     public void Paint(Graphics2D g2){
-        this.getAnimation().PaintAnims(this.getPosX(), this.getPosY(), this.getImage(),
-                g2, 0, this.getRotation().getRotate());
+        if (this.isDestroyAlready == false){
+            this.getAnimation().PaintAnims(this.getPosX(), this.getPosY(), this.getImage(),
+                    g2, 0, this.getRotation().getRotate());
+        }
     }
     public void Update(long deltaTime){
+        if (!this.checkBoundX(this.getPosX()) || !this.checkBoundY(this.getPosY())){
+            Destroy();
+        }
+
         this.getAnimation().Update_Me(deltaTime);
+    }
+    public void Destroy(){
+        this.isDestroyAlready = true;
+    }
+    public boolean checkCollision(Rectangle rectOfOrtherObject){
+        if (this.isDestroyAlready == true)
+            return false;
+
+        Rectangle rect = getRect();
+        return rect.intersects(rectOfOrtherObject);
+    }
+    public boolean checkCollision(Objects ortherObject){
+        if (ortherObject.isDestroyAlready == true || this.isDestroyAlready == true)
+            return false;
+
+        Rectangle rect = getRect();
+        Rectangle ortherRect = ortherObject.getRect();
+        return rect.intersects(ortherRect);
     }
 
     //region Getter and Setter
@@ -280,10 +304,6 @@ public class Objects {
     }
     public void setRotation(Rotation rotation) {
         this.rotation = rotation;
-
-//        if (this.needCheckBound){
-//            setPos(getNewPointAfterCheckBound(this.rotation, this.pos));
-//        }
     }
     public State getState() {
         return state;

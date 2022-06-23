@@ -14,6 +14,7 @@ public class Shield extends Objects {
 
         super.setAnimation(100, 255, 0, SHIELD_WIDTH,
                 SHIELD_HEIGHT, 33, 0, 2);
+        super.Destroy();
     }
     public void Update(long deltaTime){
         this.getAnimation().Update_Me(deltaTime);
