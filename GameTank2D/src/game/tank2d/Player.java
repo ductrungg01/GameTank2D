@@ -23,7 +23,7 @@ public class Player extends Objects {
     static final int PLAYER_WIDTH = 30;
     static final int PLAYER_HEIGHT = 32;
     static final int PLAYER_MOVE = 8;
-    static final int X_DEFAULT_LOCATION = PIXEL * 11;
+    static final int X_DEFAULT_LOCATION = PIXEL * 10;
     static final int Y_DEFAULT_LOCATION = PIXEL * (30 - 4);
     static final State DEFAULT_STATE = State.IDLE;
     static final Rotation DEFAULT_ROTATION = Rotation.UP;
@@ -99,7 +99,12 @@ public class Player extends Objects {
         super.Reset(X_DEFAULT_LOCATION, Y_DEFAULT_LOCATION, DEFAULT_STATE, DEFAULT_ROTATION);
     }
     public void StartShield(){
-        timer.schedule(timerTask, Shield.SHIELD_ACTIVE_TIME);
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                EndShield();
+            }
+        }, Shield.SHIELD_ACTIVE_TIME);
         this.shield = new Shield(this.getPosX() - 2, this.getPosY() + 1);
         this.shield.isDestroyAlready = false;
     }

@@ -296,7 +296,6 @@ public class Objects {
 
         aFrameOnImage = new AFrameOnImage(xOnImage, yOnImage, frameWidth, frameHeight);
         anim.AddFrame(aFrameOnImage);
-
         this.animation.add(anim);
     }
     public Rotation getRotation() {

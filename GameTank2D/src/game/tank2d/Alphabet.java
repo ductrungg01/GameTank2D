@@ -46,7 +46,9 @@ enum TypeOfAlphabet {
     STRAIGHT(42), // |
     DASH(43), // -
     MORE(44), // >
-    LESS(45); // <
+    LESS(45), // <
+    ENEMY(46),
+    ALLY(47);
 
 
     int type;
@@ -77,6 +79,16 @@ public class Alphabet extends Objects {
 
         // region case
         switch (type){
+            case ENEMY -> {
+                xOnImg = 48;
+                yOnImg = 272;
+                break;
+            }
+            case ALLY -> {
+                xOnImg = 32;
+                yOnImg = 272;
+                break;
+            }
             case A -> {
                 xOnImg = 16 * 0;
                 yOnImg = 992;

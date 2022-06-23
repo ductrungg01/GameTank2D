@@ -60,6 +60,47 @@ public class Map {
             {b0, b0, b0, b0, b0, b0, b0, b0, b0, b0, b0, b1, b0, b0, b1, b0, b0, b0, b0, b0, b0, b0, b0, b0, b0, b0},
 
     };
+    static TypeOfBrick[][] brickMap2 = {
+            {b0, b0, b0, b0, b0, b0, b2, b2, b0, b0, b0, b0, b0, b0, b2, b2, b0, b0, b0, b0, b0, b0, b0, b0, b0, b0},
+            {b0, b0, b0, b0, b0, b0, b2, b2, b0, b0, b0, b0, b0, b0, b2, b2, b0, b0, b0, b0, b0, b0, b0, b0, b0, b0},
+
+            {b0, b0, b1, b1, b0, b0, b2, b2, b0, b0, b0, b0, b0, b0, b1, b1, b0, b0, b1, b1, b0, b0, b1, b1, b0, b0},
+            {b0, b0, b1, b1, b0, b0, b2, b2, b0, b0, b0, b0, b1, b1, b1, b1, b0, b0, b1, b1, b0, b0, b1, b1, b0, b0},
+
+            {b0, b0, b1, b1, b0, b0, b0, b0, b0, b0, b0, b0, b1, b1, b1, b1, b0, b0, b1, b1, b2, b2, b1, b1, b0, b0},
+            {b0, b0, b1, b1, b0, b0, b0, b0, b0, b0, b0, b0, b1, b1, b1, b1, b0, b0, b1, b1, b2, b2, b1, b1, b0, b0},
+
+            {b0, b0, b0, b0, b0, b0, b1, b1, b0, b0, b0, b0, b0, b0, b0, b0, b0, b0, b2, b2, b0, b0, b0, b0, b2, b2},
+            {b0, b0, b0, b0, b0, b0, b1, b1, b0, b0, b0, b0, b0, b0, b0, b0, b0, b0, b2, b2, b0, b0, b0, b0, b2, b2},
+
+            {b4, b4, b0, b0, b0, b0, b1, b1, b0, b0, b0, b0, b2, b2, b0, b0, b0, b0, b1, b1, b4, b4, b1, b1, b0, b0},
+            {b4, b4, b0, b0, b0, b0, b1, b1, b0, b0, b0, b0, b2, b2, b0, b0, b0, b0, b1, b1, b4, b4, b1, b1, b0, b0},
+
+            {b4, b4, b4, b4, b0, b0, b0, b0, b0, b0, b1, b1, b0, b0, b0, b0, b2, b2, b0, b0, b4, b4, b0, b0, b0, b0},
+            {b4, b4, b4, b4, b0, b0, b0, b0, b0, b0, b1, b1, b0, b0, b0, b0, b2, b2, b0, b0, b4, b4, b0, b0, b0, b0},
+
+            {b0, b0, b1, b1, b1, b1, b1, b1, b4, b4, b4, b4, b4, b4, b2, b2, b0, b0, b0, b0, b4, b4, b1, b1, b0, b0},
+            {b0, b0, b1, b1, b1, b1, b1, b1, b4, b4, b4, b4, b4, b4, b2, b2, b0, b0, b0, b0, b4, b4, b1, b1, b0, b0},
+
+            {b0, b0, b0, b0, b0, b0, b2, b2, b4, b4, b1, b1, b0, b0, b1, b1, b0, b0, b1, b1, b0, b0, b1, b1, b0, b0},
+            {b0, b0, b0, b0, b0, b0, b2, b2, b4, b4, b1, b1, b0, b0, b1, b1, b0, b0, b1, b1, b0, b0, b1, b1, b0, b0},
+
+            {b2, b2, b1, b1, b0, b0, b2, b2, b0, b0, b1, b1, b0, b0, b1, b1, b0, b0, b0, b0, b0, b0, b1, b1, b0, b0},
+            {b2, b2, b1, b1, b0, b0, b2, b2, b0, b0, b1, b1, b0, b0, b1, b1, b0, b0, b0, b0, b0, b0, b1, b1, b0, b0},
+
+            {b0, b0, b1, b1, b0, b0, b1, b1, b0, b0, b1, b1, b1, b1, b1, b1, b0, b0, b1, b1, b2, b2, b1, b1, b0, b0},
+            {b0, b0, b1, b1, b0, b0, b1, b1, b0, b0, b1, b1, b1, b1, b1, b1, b0, b0, b1, b1, b2, b2, b1, b1, b0, b0},
+
+            {b0, b0, b1, b1, b0, b0, b1, b1, b0, b0, b1, b1, b1, b1, b1, b1, b0, b0, b0, b0, b0, b0, b0, b0, b0, b0},
+            {b0, b0, b1, b1, b0, b0, b1, b1, b0, b0, b1, b1, b1, b1, b1, b1, b0, b0, b0, b0, b0, b0, b0, b0, b0, b0},
+
+            {b0, b0, b1, b1, b0, b0, b0, b0, b0, b0, b0, b0, b0, b0, b0, b0, b0, b0, b1, b1, b0, b0, b1, b1, b0, b0},
+            {b0, b0, b1, b1, b0, b0, b0, b0, b0, b0, b0, b1, b1, b1, b1, b0, b0, b0, b1, b1, b0, b0, b1, b1, b0, b0},
+
+            {b0, b0, b1, b1, b0, b0, b1, b1, b0, b0, b0, b1, b0, b0, b1, b0, b0, b0, b1, b1, b1, b1, b1, b1, b0, b0},
+            {b0, b0, b1, b1, b0, b0, b1, b1, b0, b0, b0, b1, b0, b0, b1, b0, b0, b0, b1, b1, b1, b1, b1, b1, b0, b0},
+
+    };
     public void initBrickMap1()
     {
         mapbrick.clear();
@@ -72,7 +113,18 @@ public class Map {
             }
         }
     }
-
+    public void initBrickMap2()
+    {
+        mapbrick.clear();
+        for (int i = 0; i < MAP_HEIGHT_TILE; i++)
+        {
+            for (int j = 0; j < MAP_WIDTH_TILE; j++)
+            {
+                if (brickMap2[i][j] != TypeOfBrick.BRICK000)
+                    mapbrick.add(new Brick(brickMap2[i][j], getTilePosX(MAP_WIDTH_TILE * i + j), getTilePosY(MAP_WIDTH_TILE * i + j), BRICK_WIDTH, BRICK_HEIGHT));
+            }
+        }
+    }
     int getTilePosX(int tileNumber)
     {
         return (tileNumber % MAP_WIDTH_TILE + 2) * PIXEL;
@@ -83,7 +135,7 @@ public class Map {
         return (tileNumber / MAP_WIDTH_TILE + 2) * PIXEL;
     }
 
-    public ArrayList<Brick> getBrickListMap1()
+    public ArrayList<Brick> getBrickListMap()
     {
         return mapbrick;
     }
