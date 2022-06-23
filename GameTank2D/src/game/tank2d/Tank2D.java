@@ -119,14 +119,6 @@ public class Tank2D extends GameScreen {
         }
         //endregion
 
-        //region
-        for (int i = 0; i < enemyList.size(); i++){
-            if (enemyList.get(i).checkCollision(pRect)){
-                return false;
-            }
-        }
-        //endregion
-
         return true;
     }
 
