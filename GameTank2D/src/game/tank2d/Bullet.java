@@ -5,12 +5,13 @@ import pkg2dgamesframework.Objects;
 public class Bullet extends Objects {
     public static final int BULLET_WIDTH = 7;
     public static final int BULLET_HEIGHT = 9;
-    private static final int BULLET_MOVE = 2;
+    private static final int BULLET_MOVE = 3;
     private static final State DEFAULT_STATE = State.IDLE;
+    private int typeOfBullet;
 
-    Bullet(int x, int y, Rotation rotation) {
+    Bullet(int x, int y, Rotation rotation, int type) {
         super(x, y, BULLET_WIDTH, BULLET_HEIGHT, BULLET_MOVE, DEFAULT_STATE, rotation);
-
+        this.typeOfBullet = type;
         setAnimation(100, 0, 351, BULLET_WIDTH, BULLET_HEIGHT);
         setAnimation(100, 0, 351, BULLET_WIDTH, BULLET_HEIGHT);
     }
@@ -49,5 +50,7 @@ public class Bullet extends Objects {
 
         return new Explosion(x - Explosion.EXPLOSION_WIDTH/2, y - Explosion.EXPLOSION_HEIGHT/2);
     }
-
+    public int getType() {
+        return this.typeOfBullet;
+    }
 }

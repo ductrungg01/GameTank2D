@@ -6,6 +6,10 @@ import java.awt.*;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static game.tank2d.Player.PLAYER_HEIGHT;
+import static game.tank2d.Player.PLAYER_WIDTH;
+import static game.tank2d.Tank2D.*;
+
 enum TypeOfEnemy{
     ENEMY001(1),
     ENEMY002(2),
@@ -28,6 +32,9 @@ public class Enemy extends Objects {
     public static final int ENEMY_HEIGHT = 30;
     private static final State DEFAULT_STATE = State.IDLE;
     private static final int ENEMY_MOVE = 1;
+    private long timeChangeDirection = 0;
+    private long timeShoot = 0;
+    private Rotation lastDirection = Rotation.DOWN;
     private TypeOfEnemy type;
     private EnemyAppear enemyAppear;
     private Timer timer = new Timer();
@@ -42,7 +49,7 @@ public class Enemy extends Objects {
 
         this.timer.schedule(timerTask, EnemyAppear.ENEMYAPPEAR_ACTIVE_TIME);
         this.enemyAppear = new EnemyAppear(this.getPosX(), this.getPosY());
-
+        this.needCheckBound = true;
         this.type = type;
 
         int yOnImage = 0;
@@ -70,21 +77,132 @@ public class Enemy extends Objects {
         this.enemyAppear.setActive(false);
     }
 
-    public void update(long deltaTime){
+    @Override
+    public void Update(long deltaTime){
+        if (this.isDestroyAlready) return;
         if (this.enemyAppear.isActive){
             this.enemyAppear.Update(deltaTime);
         } else {
-            Move(this.rotation);
-
+            if (System.currentTimeMillis() - timeChangeDirection > 2000) {
+                timeChangeDirection = System.currentTimeMillis();
+                int typeMove = generator.nextInt(0, 2); //0: move to eagle, 1: move random direction
+                int direction = generator.nextInt(0, 5); // direction to move random
+                Rotation direction1; // left or right | random direction
+                Rotation direction2 = Rotation.DOWN; // down
+                if (typeMove == 0) {
+                    if (this.getPosX() > eagle.getPosX())
+                        direction1 = Rotation.LEFT;
+                    else
+                        direction1 = Rotation.RIGHT;
+                    direction = generator.nextInt(0, 2);
+                    if (direction == 0)
+                        this.rotation = direction1;
+                    else
+                        this.rotation = direction2;
+                } else {
+                    switch (direction) {
+                        case 0:
+                            direction1 = Rotation.LEFT;
+                            break;
+                        case 1:
+                            direction1 = Rotation.UP;
+                            break;
+                        case 2:
+                            direction1 = Rotation.RIGHT;
+                            break;
+                        case 3:
+                            direction1 = Rotation.DOWN;
+                            break;
+                        default:
+                            direction1 = Rotation.DOWN;
+                            break;
+                    }
+                    this.rotation = direction1;
+                }
+            }
+            if (checkNextPosIsWrong(this.rotation, this))
+                Move(this.rotation);
+            if (System.currentTimeMillis() - timeShoot > 1500) {
+                bulletList.add(createNewBullet());
+                timeShoot = System.currentTimeMillis();
+            }
             this.getAnimation().Update_Me(deltaTime);
         }
     }
+    boolean checkNextPosIsWrong(Objects.Rotation rotation, Objects o){
+        // Vị trí tiếp theo trong tương lai
+        Point p = o.getNextPos(rotation);
+        Rectangle pRect = new Rectangle(p.x, p.y, PLAYER_WIDTH, PLAYER_HEIGHT);
+
+        //region Kiểm tra với brick
+        for (int i = 0; i < mapBrick.size(); i++){
+            if (mapBrick.get(i).checkCollision(pRect)){
+                switch (mapBrick.get(i).getType()){
+                    case BRICK001, BRICK002 -> {
+                        return false;
+                    }
+                    default -> {
+                        break;
+                    }
+                }
+            }
+        }
+        //endregion
+
+        //region vs Enemy
+        for (int i = 0; i < enemyList.size(); i++) {
+            Enemy e = enemyList.get(i);
+            if (e.checkCollision(pRect) && e.getPosX() != o.getPosX() && e.getPosY() != o.getPosY())
+                return false;
+        }
+        //endregion
+        if (Player.getInstance().checkCollision(pRect))
+            return false;
+        if (twoPlayersMode && Player2.getInstance().checkCollision(pRect))
+            return false;
+
+        if (eagle != null)
+            if (eagle.checkCollision(pRect))
+                return false;
+        return true;
+
+    }
+
     public void Paint(Graphics2D g2){
         if (this.enemyAppear.isActive){
             this.enemyAppear.Paint(g2);
         } else {
             super.Paint(g2);
         }
+    }
+
+    public Bullet createNewBullet(){
+        int xBullet = 0;
+        int yBullet = 0;
+
+        switch (this.rotation){
+            case UP -> {
+                xBullet = this.pos.x + ENEMY_WIDTH/2 - 3;
+                yBullet = this.pos.y - 9;
+                break;
+            }
+            case DOWN -> {
+                xBullet = this.pos.x + ENEMY_WIDTH/2 - 3;
+                yBullet = this.pos.y + ENEMY_HEIGHT + 9;
+                break;
+            }
+            case LEFT -> {
+                xBullet = pos.x - 9;
+                yBullet = pos.y + ENEMY_HEIGHT/2 - 4;
+                break;
+            }
+            case RIGHT -> {
+                xBullet = pos.x + ENEMY_WIDTH + 9;
+                yBullet = pos.y + ENEMY_HEIGHT/2 - 4;
+                break;
+            }
+        }
+        return new Bullet(xBullet, yBullet, this.rotation, 0);
     }
 
     //region Getter and Setter

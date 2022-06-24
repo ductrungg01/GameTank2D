@@ -54,6 +54,7 @@ public class Objects {
     protected int w, h;
     protected boolean needCheckBound = false;
     public boolean isDestroyAlready = false;
+    public boolean isNotGameObject = false;
     protected final int OBJECT_MOVE;
     protected BufferedImage image;
     public static final String DEFAULT_LINK_IMAGE = "Assets/sprite.PNG";
@@ -203,6 +204,7 @@ public class Objects {
         }
     }
     public void Update(long deltaTime){
+        if (!this.isNotGameObject)
         if (!this.checkBoundX(this.getPosX()) || !this.checkBoundY(this.getPosY())){
             Destroy();
         }

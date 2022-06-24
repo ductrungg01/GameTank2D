@@ -2,12 +2,13 @@ package game.tank2d;
 
 import pkg2dgamesframework.Objects;
 
+import javax.sound.sampled.LineUnavailableException;
 import java.awt.*;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static game.tank2d.Tank2D.PIXEL;
+import static game.tank2d.Tank2D.*;
 
 public class Player extends Objects {
     private Shield shield = new Shield(this.getPosX() - 2, this.getPosY() + 1);
@@ -44,7 +45,7 @@ public class Player extends Objects {
         setAnimation(100, 0, 0, PLAYER_WIDTH, PLAYER_HEIGHT);
 
         //// RUN
-        setAnimation(100, 0, 0, PLAYER_WIDTH, PLAYER_HEIGHT, 32, 0, 8);
+        setAnimation(100, 0, 0, PLAYER_WIDTH, PLAYER_HEIGHT, 32, 0, 2);
 
         Reset();
     }
@@ -74,8 +75,8 @@ public class Player extends Objects {
                 break;
             }
         }
-
-        return new Bullet(xBullet, yBullet, this.rotation);
+        PlaySound(FireSound);
+        return new Bullet(xBullet, yBullet, this.rotation, 1);
     }
     public void Update(long deltaTime){
         this.getAnimation().Update_Me(deltaTime);
@@ -96,7 +97,9 @@ public class Player extends Objects {
         this.shield.setActive(false);
     }
     public void Reset() throws IOException {
+        this.isDestroyAlready = false;
         super.Reset(X_DEFAULT_LOCATION, Y_DEFAULT_LOCATION, DEFAULT_STATE, DEFAULT_ROTATION);
+        if (CurrentScene != 0) StartShield();
     }
     public void StartShield(){
         timer.schedule(new TimerTask() {

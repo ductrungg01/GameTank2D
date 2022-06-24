@@ -312,7 +312,7 @@ public class Alphabet extends Objects {
 
         }
         // endregion
-
+        this.isNotGameObject = true;
         super.setAnimation(100, xOnImg, yOnImg, ALPHABET_WIDTH, ALPHABET_HEIGHT);
     }
     public void update(long deltaTime){

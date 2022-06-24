@@ -6,7 +6,7 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import javax.swing.JFrame;
 
-public abstract class GameScreen extends JFrame implements KeyListener{
+public abstract class GameScreen extends JFrame implements KeyListener {
 
     public static int KEY_PRESSED = 0;
     public static int KEY_RELEASED = 1;

@@ -5,7 +5,7 @@ import pkg2dgamesframework.Objects;
 public class Shield extends Objects {
     public static final int SHIELD_WIDTH = 34;
     public static final int SHIELD_HEIGHT = 34;
-    public static final int SHIELD_ACTIVE_TIME = 3000;
+    public static final int SHIELD_ACTIVE_TIME = 5000;
     private static final State DEFAULT_STATE = State.IDLE;
     private static final Rotation DEFAULT_ROTATION = Rotation.UP;
     public boolean isActive = true;
