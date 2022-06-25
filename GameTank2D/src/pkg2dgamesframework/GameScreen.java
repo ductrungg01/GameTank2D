@@ -1,9 +1,14 @@
 package pkg2dgamesframework;
 
+import game.tank2d.KeyPlayer2;
+
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
+import java.security.Key;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JFrame;
 
 public abstract class GameScreen extends JFrame implements KeyListener {
@@ -15,7 +20,8 @@ public abstract class GameScreen extends JFrame implements KeyListener {
     public int CUSTOM_HEIGHT = 500;
     
     private GameThread G_Thread;
-    
+    private KeyPlayer2 keyPlayer2;
+
     public static int MASTER_WIDTH = 500, MASTER_HEIGHT = 500;
     
     public GameScreen(){
@@ -55,7 +61,23 @@ public abstract class GameScreen extends JFrame implements KeyListener {
     
     private void InitThread(){
         G_Thread = new GameThread(this);
+        //keyPlayer2 = new KeyPlayer2(this);
         add(G_Thread);
+    }
+    protected List<String> listKey = new ArrayList<String>();
+    public void AddKey(int e)
+    {
+        if (!listKey.contains(String.valueOf(e))) {
+            listKey.add(String.valueOf(e));
+            System.out.println("Keypressed: "+e);
+        }
+    }
+    public void RemoveKey(int e)
+    {
+        if (listKey.contains(String.valueOf(e))) {
+            listKey.remove(String.valueOf(e));
+            System.out.println("KeyRelease: "+e);
+        }
     }
     
     @Override
@@ -63,16 +85,15 @@ public abstract class GameScreen extends JFrame implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        KEY_ACTION(e, GameScreen.KEY_PRESSED);
+        AddKey(e.getKeyCode());
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        KEY_ACTION(e, GameScreen.KEY_RELEASED);
+        RemoveKey(e.getKeyCode());
     }
     
     public abstract void GAME_UPDATE(long deltaTime);
     public abstract void GAME_PAINT(Graphics2D g2);
-    public abstract void KEY_ACTION(KeyEvent e, int Event);
-    
+    public abstract void KEY_ACTION();
 }

@@ -45,6 +45,7 @@ public class Tank2D extends GameScreen {
     static long timeToSpawnEnemy = 0;
     static boolean nextLevel = false;
     static boolean endGame = false;
+    static long playSoundTime = System.currentTimeMillis();
 
     static String StartSound = "Start.wav";
     static String GetItemSound = "GetItem.wav";
@@ -86,6 +87,18 @@ public class Tank2D extends GameScreen {
             clip.start();
         } catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
             e.printStackTrace();
+        }
+    }
+
+    static void RemoveUnusedObject() {
+        while (bulletList.size() > 20) {
+            bulletList.remove(0);
+        }
+        while (explosionList.size() > 20) {
+            explosionList.remove(0);
+        }
+        while (enemyList.size() > 20) {
+            enemyList.remove(0);
         }
     }
 
@@ -545,7 +558,7 @@ public class Tank2D extends GameScreen {
     }
 
     // Cái này chỉ là kiểm tra xem vị trí TIẾP THEO (trong tương lai) có hợp lệ hay không?
-    boolean checkNextPosIsWrong(Objects.Rotation rotation, Objects o) {
+    boolean checkNextPosIsWrong(Objects.Rotation rotation, Objects o, int player) {
         // Vị trí tiếp theo trong tương lai
         Point p = o.getNextPos(rotation);
         Rectangle pRect = new Rectangle(p.x, p.y, PLAYER_WIDTH, PLAYER_HEIGHT);
@@ -571,6 +584,12 @@ public class Tank2D extends GameScreen {
                 return false;
         }
         //endregion
+
+        if (Player2.getInstance().checkCollision(pRect) && player == 1)
+            return false;
+
+        if (Player.getInstance().checkCollision(pRect) && player == 2)
+            return false;
 
         if (eagle != null)
             if (eagle.checkCollision(pRect))
@@ -867,6 +886,7 @@ public class Tank2D extends GameScreen {
         if (gameOver || endGame)
             if (System.currentTimeMillis() - endTime > 2000) return;
         CollisionHandling();
+        RemoveUnusedObject();
         // player
         Player.getInstance().Update(deltaTime);
         if (twoPlayersMode)
@@ -1081,7 +1101,7 @@ public class Tank2D extends GameScreen {
                                 Player.getInstance().setRotation(Objects.Rotation.LEFT);
                             }
 
-                            if (checkNextPosIsWrong(Objects.Rotation.LEFT, Player.getInstance())) {
+                            if (checkNextPosIsWrong(Objects.Rotation.LEFT, Player.getInstance(), 1)) {
                                 Player.getInstance().Move(Objects.Rotation.LEFT);
                             }
                             break;
@@ -1090,7 +1110,7 @@ public class Tank2D extends GameScreen {
                                 Player.getInstance().setRotation(Objects.Rotation.UP);
                             }
 
-                            if (checkNextPosIsWrong(Objects.Rotation.UP, Player.getInstance())) {
+                            if (checkNextPosIsWrong(Objects.Rotation.UP, Player.getInstance(), 1)) {
                                 Player.getInstance().Move(Objects.Rotation.UP);
                             }
                             break;
@@ -1099,7 +1119,7 @@ public class Tank2D extends GameScreen {
                                 Player.getInstance().setRotation(Objects.Rotation.RIGHT);
                             }
 
-                            if (checkNextPosIsWrong(Objects.Rotation.RIGHT, Player.getInstance())) {
+                            if (checkNextPosIsWrong(Objects.Rotation.RIGHT, Player.getInstance(), 1)) {
                                 Player.getInstance().Move(Objects.Rotation.RIGHT);
                             }
                             break;
@@ -1108,7 +1128,7 @@ public class Tank2D extends GameScreen {
                                 Player.getInstance().setRotation(Objects.Rotation.DOWN);
                             }
 
-                            if (checkNextPosIsWrong(Objects.Rotation.DOWN, Player.getInstance())) {
+                            if (checkNextPosIsWrong(Objects.Rotation.DOWN, Player.getInstance(), 1)) {
                                 Player.getInstance().Move(Objects.Rotation.DOWN);
                             }
                             break;
@@ -1117,7 +1137,7 @@ public class Tank2D extends GameScreen {
                                 Player2.getInstance().setRotation(Objects.Rotation.LEFT);
                             }
 
-                            if (checkNextPosIsWrong(Objects.Rotation.LEFT, Player2.getInstance())) {
+                            if (checkNextPosIsWrong(Objects.Rotation.LEFT, Player2.getInstance(), 2)) {
                                 Player2.getInstance().Move(Objects.Rotation.LEFT);
                             }
                             break;
@@ -1126,7 +1146,7 @@ public class Tank2D extends GameScreen {
                                 Player2.getInstance().setRotation(Objects.Rotation.UP);
                             }
 
-                            if (checkNextPosIsWrong(Objects.Rotation.UP, Player2.getInstance())) {
+                            if (checkNextPosIsWrong(Objects.Rotation.UP, Player2.getInstance(), 2)) {
                                 Player2.getInstance().Move(Objects.Rotation.UP);
                             }
                             break;
@@ -1135,7 +1155,7 @@ public class Tank2D extends GameScreen {
                                 Player2.getInstance().setRotation(Objects.Rotation.RIGHT);
                             }
 
-                            if (checkNextPosIsWrong(Objects.Rotation.RIGHT, Player2.getInstance())) {
+                            if (checkNextPosIsWrong(Objects.Rotation.RIGHT, Player2.getInstance(), 2)) {
                                 Player2.getInstance().Move(Objects.Rotation.RIGHT);
                             }
                             break;
@@ -1144,17 +1164,21 @@ public class Tank2D extends GameScreen {
                                 Player2.getInstance().setRotation(Objects.Rotation.DOWN);
                             }
 
-                            if (checkNextPosIsWrong(Objects.Rotation.DOWN, Player2.getInstance())) {
+                            if (checkNextPosIsWrong(Objects.Rotation.DOWN, Player2.getInstance(), 2)) {
                                 Player2.getInstance().Move(Objects.Rotation.DOWN);
                             }
                             break;
                         case KeyEvent.VK_SPACE:
+                            if (System.currentTimeMillis() - Player2.getInstance().getTimeShoot() > 1000) {
+                                Player2.getInstance().setTimeShoot(System.currentTimeMillis());
                                 bulletList.add(Player2.getInstance().createNewBullet());
-
+                            }
                             break;
                         case KeyEvent.VK_ENTER:
+                            if (System.currentTimeMillis() - Player.getInstance().getTimeShoot() > 1000) {
+                                Player.getInstance().setTimeShoot(System.currentTimeMillis());
                                 bulletList.add(Player.getInstance().createNewBullet());
-
+                            }
                             break;
                     }
                 } else {
@@ -1166,7 +1190,10 @@ public class Tank2D extends GameScreen {
                     }
                 }
             } else {
-                    PlaySound(KeyPressSound);
+                    if (System.currentTimeMillis() - playSoundTime > 300) {
+                        PlaySound(KeyPressSound);
+                        playSoundTime = System.currentTimeMillis();
+                    };
                     switch (e) {
                         case KeyEvent.VK_UP: // up
                             if (CursorPosition == 22)

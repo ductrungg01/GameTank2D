@@ -28,6 +28,7 @@ public class Player extends Objects {
     static final int Y_DEFAULT_LOCATION = PIXEL * (30 - 4);
     static final State DEFAULT_STATE = State.IDLE;
     static final Rotation DEFAULT_ROTATION = Rotation.UP;
+    static private long timeShoot = System.currentTimeMillis();
 
     static {
         try {
@@ -128,6 +129,13 @@ public class Player extends Objects {
     }
     public static Player getInstance() {
         return instance;
+    }
+
+    public static long getTimeShoot() {
+        return timeShoot;
+    }
+    public void setTimeShoot(long time) {
+        this.timeShoot = time;
     }
     //endregion
 }

@@ -155,7 +155,8 @@ public class Enemy extends Objects {
         //region vs Enemy
         for (int i = 0; i < enemyList.size(); i++) {
             Enemy e = enemyList.get(i);
-            if (e.checkCollision(pRect) && e.getPosX() != o.getPosX() && e.getPosY() != o.getPosY())
+            System.out.println(e == o);
+            if (e.checkCollision(pRect) && e != o)
                 return false;
         }
         //endregion
