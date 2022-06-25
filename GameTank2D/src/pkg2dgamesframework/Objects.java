@@ -55,7 +55,7 @@ public class Objects {
     protected boolean needCheckBound = false;
     public boolean isDestroyAlready = false;
     public boolean isNotGameObject = false;
-    protected final int OBJECT_MOVE;
+    protected int OBJECT_MOVE;
     protected BufferedImage image;
     public static final String DEFAULT_LINK_IMAGE = "Assets/sprite.PNG";
     protected Rectangle rect;
@@ -311,6 +311,9 @@ public class Objects {
     }
     public void setState(State state) {
         this.state = state;
+    }
+    public void setOBJECT_MOVE(int speed) {
+        this.OBJECT_MOVE = speed;
     }
     //endregion
 

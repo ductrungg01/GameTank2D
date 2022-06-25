@@ -31,10 +31,9 @@ public class Enemy extends Objects {
     public static final int ENEMY_WIDTH = 26;
     public static final int ENEMY_HEIGHT = 30;
     private static final State DEFAULT_STATE = State.IDLE;
-    private static final int ENEMY_MOVE = 1;
+    private static int ENEMY_MOVE = 1;
     private long timeChangeDirection = 0;
     private long timeShoot = 0;
-    private Rotation lastDirection = Rotation.DOWN;
     private TypeOfEnemy type;
     private EnemyAppear enemyAppear;
     private Timer timer = new Timer();
@@ -47,11 +46,14 @@ public class Enemy extends Objects {
     Enemy(TypeOfEnemy type, int x, int y, Rotation rotation) {
         super(x, y, ENEMY_WIDTH, ENEMY_HEIGHT, ENEMY_MOVE, DEFAULT_STATE, rotation);
 
+        if (this.type != TypeOfEnemy.ENEMY001 && this.type != TypeOfEnemy.ENEMY002) {
+            setOBJECT_MOVE(ENEMY_MOVE * 2);
+        }
+
         this.timer.schedule(timerTask, EnemyAppear.ENEMYAPPEAR_ACTIVE_TIME);
         this.enemyAppear = new EnemyAppear(this.getPosX(), this.getPosY());
         this.needCheckBound = true;
         this.type = type;
-
         int yOnImage = 0;
 
         switch (type){
@@ -120,8 +122,9 @@ public class Enemy extends Objects {
                     this.rotation = direction1;
                 }
             }
-            if (checkNextPosIsWrong(this.rotation, this))
+            if (checkNextPosIsWrong(this.rotation, this)) {
                 Move(this.rotation);
+            }
             if (System.currentTimeMillis() - timeShoot > 1500) {
                 bulletList.add(createNewBullet());
                 timeShoot = System.currentTimeMillis();
