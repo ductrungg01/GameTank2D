@@ -75,6 +75,18 @@ public class Tank2D extends GameScreen {
         GameScreen game = new Tank2D();
     }
 
+    static void RemoveUnusedObject() {
+        while (bulletList.size() > 20) {
+            bulletList.remove(0);
+        }
+        while (explosionList.size() > 20) {
+            explosionList.remove(0);
+        }
+        while (enemyList.size() > 20) {
+            enemyList.remove(0);
+        }
+    }
+
     static void PlaySound(String path) {
         Clip clip = null;
         try {
@@ -519,7 +531,6 @@ public class Tank2D extends GameScreen {
     }
 
     static void CheckNextLevel() {
-        System.out.println("enemyListSize: " + enemyList.size());
         if (numberEnemyToSpawn == 0)
         for (int i = 0; i < enemyList.size(); i++) {
             if (enemyList.get(i).isDestroyAlready == false)
@@ -534,7 +545,6 @@ public class Tank2D extends GameScreen {
             endGame = true;
             endTime = System.currentTimeMillis();
         }
-        System.out.println(nextLevel);
     }
 
     public void newExplosion(Bullet bullet){
@@ -597,26 +607,21 @@ public class Tank2D extends GameScreen {
                         case BRICK001 -> {
                             brickNow.Destroy();
                             needRemoveBullet = true;
-                            System.out.println("Va cham brick001 - bullet");
                             newExplosion(bulletNow);
                             break;
                         }
                         case BRICK002 -> {
                             needRemoveBullet = true;
                             newExplosion(bulletNow);
-                            System.out.println("Va cham brick002 - bullet");
                             break;
                         }
                         case BRICK003 -> {
-                            System.out.println("Va cham brick003 - bullet");
                             break;
                         }
                         case BUSH -> {
-                            System.out.println("Va cham brick bush - bullet");
                             break;
                         }
                         case WATER -> {
-                            System.out.println("Va cham brick water - bullet");
                             break;
                         }
                     }
@@ -722,7 +727,6 @@ public class Tank2D extends GameScreen {
                             }
                         }
                         enemyNow.Destroy();
-                        System.out.println("Enemy detroyed");
                     }
 
                     newExplosion(bulletNow);
@@ -739,7 +743,6 @@ public class Tank2D extends GameScreen {
                 if (bulletList.get(i).getType() != bulletList.get(j).getType() && bulletList.get(i).checkCollision(bulletList.get(j))){
                     bulletList.get(i).Destroy();
                     bulletList.get(j).Destroy();
-                    System.out.println("va chạm bullet vs bullet");
                 }
             }
         }
@@ -749,7 +752,6 @@ public class Tank2D extends GameScreen {
         //region Item vs Player
         if (item != null) {
             if (Player.getInstance().checkCollision(item)) {
-                System.out.println(item.getType());
                 score += 500;
                 PlaySound(GetItemSound);
                 switch (item.getType()) {
@@ -799,7 +801,6 @@ public class Tank2D extends GameScreen {
                 }
             } else
             if (Player2.getInstance().checkCollision(item)) {
-                System.out.println(item.getType());
                 score += 500;
                 PlaySound(GetItemSound);
                 switch (item.getType()) {
@@ -861,7 +862,6 @@ public class Tank2D extends GameScreen {
                     InitGameOver();
                     gameOver = true;
                     endTime = System.currentTimeMillis();
-                    System.out.println("Game Over");
                     return;
                 }
             }
@@ -872,6 +872,7 @@ public class Tank2D extends GameScreen {
         if (gameOver || endGame)
             if (System.currentTimeMillis() - endTime > 2000) return;
         CollisionHandling();
+        RemoveUnusedObject();
         // player
         Player.getInstance().Update(deltaTime);
         if (twoPlayersMode)
@@ -893,7 +894,6 @@ public class Tank2D extends GameScreen {
             {
                 activeItem = false;
                 UpgradeWall(false);
-                System.out.println("End effect");
             }
         }
 
@@ -1025,7 +1025,6 @@ public class Tank2D extends GameScreen {
                 if (posX % 2 == 1) posX++;
                 if (posX % 4 == 0) posX += 2;
                 if (posX > 26) posX -= 4;
-                System.out.println(type + " " + posX + " " + posY);
                 Enemy e;
                 boolean canSpawn = true;
                 switch (type) {
@@ -1153,9 +1152,11 @@ public class Tank2D extends GameScreen {
                             }
                             break;
                         case KeyEvent.VK_SPACE:
+                            if (System.currentTimeMillis() -  Player2.getInstance().getTimeShoot() > 1000)
                             bulletList.add(Player2.getInstance().createNewBullet());
                             break;
                         case KeyEvent.VK_ENTER:
+                            if (System.currentTimeMillis() -  Player.getInstance().getTimeShoot() > 1000)
                             bulletList.add(Player.getInstance().createNewBullet());
                             break;
                     }
@@ -1185,7 +1186,6 @@ public class Tank2D extends GameScreen {
                             CurrentScene++;
                             InitLevel1();
                             InitUIBar();
-                            System.out.println(CurrentScene + "");
                             break;
                     }
             }
