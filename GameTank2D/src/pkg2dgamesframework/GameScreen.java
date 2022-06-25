@@ -67,10 +67,23 @@ public abstract class GameScreen extends JFrame implements KeyListener {
     protected List<String> listKey = new ArrayList<String>();
     public void AddKey(int e)
     {
-        if (!listKey.contains(String.valueOf(e))) {
-            listKey.add(String.valueOf(e));
-            System.out.println("Keypressed: "+e);
+        boolean kt=false;
+        for (int i=0;i<listKey.size();i++)
+        {
+            int a = Integer.parseInt(listKey.get(i));
+            if (e==KeyEvent.VK_UP||e==KeyEvent.VK_DOWN||e==KeyEvent.VK_LEFT||e==KeyEvent.VK_RIGHT)
+            {
+                if (a==KeyEvent.VK_UP||a==KeyEvent.VK_DOWN||a==KeyEvent.VK_LEFT||a==KeyEvent.VK_RIGHT)
+                    return;
+            }
+            if (e==KeyEvent.VK_W||e==KeyEvent.VK_S||e==KeyEvent.VK_A||e==KeyEvent.VK_D)
+            {
+                if (a==KeyEvent.VK_W||a==KeyEvent.VK_S|a==KeyEvent.VK_A|a==KeyEvent.VK_D)
+                    return;
+            }
         }
+        listKey.add(String.valueOf(e));
+        System.out.println("Keypressed: "+e);
     }
     public void RemoveKey(int e)
     {
