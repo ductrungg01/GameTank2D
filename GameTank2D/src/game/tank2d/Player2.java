@@ -23,12 +23,11 @@ public class Player2 extends Objects {
 
     static final int PLAYER_WIDTH = 30;
     static final int PLAYER_HEIGHT = 32;
-    static final int PLAYER_MOVE = 8;
+    static final int PLAYER_MOVE = 2;
     static final int X_DEFAULT_LOCATION = PIXEL * 18;
     static final int Y_DEFAULT_LOCATION = PIXEL * (30 - 4);
     static final State DEFAULT_STATE = State.IDLE;
     static final Rotation DEFAULT_ROTATION = Rotation.UP;
-    static long timeShoot = System.currentTimeMillis();
     static {
         try {
             instance = new Player2();
@@ -49,7 +48,6 @@ public class Player2 extends Objects {
     }
 
     public Bullet createNewBullet() {
-
         int xBullet = 0;
         int yBullet = 0;
 
@@ -75,7 +73,6 @@ public class Player2 extends Objects {
                 break;
             }
         }
-        timeShoot = System.currentTimeMillis();
         return new Bullet(xBullet, yBullet, this.rotation, 1);
     }
     public void Update(long deltaTime){
@@ -128,9 +125,6 @@ public class Player2 extends Objects {
     }
     public static Player2 getInstance() {
         return instance;
-    }
-    public long getTimeShoot() {
-        return timeShoot;
     }
     //endregion
 }
