@@ -74,8 +74,8 @@ public class GameThread extends JPanel implements Runnable{
             
             UpdateSize();
             
-            context.GAME_UPDATE(System.currentTimeMillis());
             context.KEY_ACTION();
+            context.GAME_UPDATE(System.currentTimeMillis());
             try{
                 
                 buffImage = new BufferedImage(MasterWidth, MasterHeight, BufferedImage.TYPE_INT_ARGB);

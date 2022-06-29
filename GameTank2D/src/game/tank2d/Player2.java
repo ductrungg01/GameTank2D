@@ -97,7 +97,7 @@ public class Player2 extends Objects {
     public void Reset() throws IOException {
         this.isDestroyAlready = false;
         super.Reset(X_DEFAULT_LOCATION, Y_DEFAULT_LOCATION, DEFAULT_STATE, DEFAULT_ROTATION);
-        StartShield();
+        if (CurrentScene != 0) StartShield();
     }
     public void StartShield(){
         timer.schedule(new TimerTask() {

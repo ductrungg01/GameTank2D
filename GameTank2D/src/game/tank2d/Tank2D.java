@@ -47,6 +47,11 @@ public class Tank2D extends GameScreen {
     static boolean endGame = false;
     static long playSoundTime = System.currentTimeMillis();
 
+    //LAN mode
+    static boolean lanMode = false;
+    static boolean isInRoom = false;
+    static boolean isPlayerOne = true;
+
     static String StartSound = "Start.wav";
     static String GetItemSound = "GetItem.wav";
     static String GameOverSound = "GameOver.wav";
@@ -170,6 +175,21 @@ public class Tank2D extends GameScreen {
         charList.add(new Alphabet(TypeOfAlphabet.E, PIXEL * 20, PIXEL * 22));
         charList.add(new Alphabet(TypeOfAlphabet.R, PIXEL * 21, PIXEL * 22));
         charList.add(new Alphabet(TypeOfAlphabet.S, PIXEL * 22, PIXEL * 22));
+
+        charList.add(new Alphabet(TypeOfAlphabet.TWO, PIXEL * 14, PIXEL * 24));
+        charList.add(new Alphabet(TypeOfAlphabet.P, PIXEL * 16, PIXEL * 24));
+        charList.add(new Alphabet(TypeOfAlphabet.L, PIXEL * 17, PIXEL * 24));
+        charList.add(new Alphabet(TypeOfAlphabet.A, PIXEL * 18, PIXEL * 24));
+        charList.add(new Alphabet(TypeOfAlphabet.Y, PIXEL * 19, PIXEL * 24));
+        charList.add(new Alphabet(TypeOfAlphabet.E, PIXEL * 20, PIXEL * 24));
+        charList.add(new Alphabet(TypeOfAlphabet.R, PIXEL * 21, PIXEL * 24));
+        charList.add(new Alphabet(TypeOfAlphabet.S, PIXEL * 22, PIXEL * 24));
+        charList.add(new Alphabet(TypeOfAlphabet.DASH, PIXEL * 23, PIXEL * 24));
+        charList.add(new Alphabet(TypeOfAlphabet.L, PIXEL * 24, PIXEL * 24));
+        charList.add(new Alphabet(TypeOfAlphabet.A, PIXEL * 25, PIXEL * 24));
+        charList.add(new Alphabet(TypeOfAlphabet.N, PIXEL * 26, PIXEL * 24));
+
+
 
         Player.getInstance().setAnimation(100, 0, 0, PLAYER_WIDTH, PLAYER_HEIGHT);
         Player.getInstance().setRotation(Objects.Rotation.RIGHT);
@@ -456,6 +476,69 @@ public class Tank2D extends GameScreen {
                     break;
             }
             count++;
+        }
+    }
+
+    static void InitRoom() {
+        charList.clear();
+        charList.add(new Alphabet(TypeOfAlphabet.P, PIXEL * 8, PIXEL * 10));
+        charList.add(new Alphabet(TypeOfAlphabet.ONE, PIXEL * 9, PIXEL * 10));
+
+        charList.add(new Alphabet(TypeOfAlphabet.P, PIXEL * 20, PIXEL * 10));
+        charList.add(new Alphabet(TypeOfAlphabet.TWO, PIXEL * 21, PIXEL * 10));
+
+        Player.getInstance().setAnimation(100, 0, 0, PLAYER_WIDTH, PLAYER_HEIGHT);
+        Player.getInstance().setRotation(Objects.Rotation.UP);
+        Player.getInstance().setState(Objects.State.RUN);
+        Player.getInstance().isDestroyAlready = false;
+
+
+        Player2.getInstance().setAnimation(100, 0, 0, PLAYER_WIDTH, PLAYER_HEIGHT);
+        Player2.getInstance().setRotation(Objects.Rotation.UP);
+        Player2.getInstance().setState(Objects.State.RUN);
+        Player2.getInstance().isDestroyAlready = false;
+
+    }
+
+    static void AddWaitingText() {
+        //waiting for other...
+        charList.add(new Alphabet(TypeOfAlphabet.W, PIXEL * 6, PIXEL * 20));
+        charList.add(new Alphabet(TypeOfAlphabet.A, PIXEL * 7, PIXEL * 20));
+        charList.add(new Alphabet(TypeOfAlphabet.I, PIXEL * 8, PIXEL * 20));
+        charList.add(new Alphabet(TypeOfAlphabet.T, PIXEL * 9, PIXEL * 20));
+        charList.add(new Alphabet(TypeOfAlphabet.I, PIXEL * 10, PIXEL * 20));
+        charList.add(new Alphabet(TypeOfAlphabet.N, PIXEL * 11, PIXEL * 20));
+        charList.add(new Alphabet(TypeOfAlphabet.G, PIXEL * 12, PIXEL * 20));
+        charList.add(new Alphabet(TypeOfAlphabet.F, PIXEL * 14, PIXEL * 20));
+        charList.add(new Alphabet(TypeOfAlphabet.O, PIXEL * 15, PIXEL * 20));
+        charList.add(new Alphabet(TypeOfAlphabet.R, PIXEL * 16, PIXEL * 20));
+        charList.add(new Alphabet(TypeOfAlphabet.O, PIXEL * 18, PIXEL * 20));
+        charList.add(new Alphabet(TypeOfAlphabet.T, PIXEL * 19, PIXEL * 20));
+        charList.add(new Alphabet(TypeOfAlphabet.H, PIXEL * 20, PIXEL * 20));
+        charList.add(new Alphabet(TypeOfAlphabet.E, PIXEL * 21, PIXEL * 20));
+        charList.add(new Alphabet(TypeOfAlphabet.R, PIXEL * 22, PIXEL * 20));
+        charList.add(new Alphabet(TypeOfAlphabet.DOT, PIXEL * 23, PIXEL * 20));
+        charList.add(new Alphabet(TypeOfAlphabet.DOT, PIXEL * 24, PIXEL * 20));
+        charList.add(new Alphabet(TypeOfAlphabet.DOT, PIXEL * 25, PIXEL * 20));
+    }
+
+    static void AddStartText() {
+        while (charList.size() > 4) {
+            charList.remove(4);
+        }
+        if (isPlayerOne) {
+            charList.add(new Alphabet(TypeOfAlphabet.E, PIXEL * 8, PIXEL * 20));
+            charList.add(new Alphabet(TypeOfAlphabet.N, PIXEL * 9, PIXEL * 20));
+            charList.add(new Alphabet(TypeOfAlphabet.T, PIXEL * 10, PIXEL * 20));
+            charList.add(new Alphabet(TypeOfAlphabet.E, PIXEL * 11, PIXEL * 20));
+            charList.add(new Alphabet(TypeOfAlphabet.R, PIXEL * 12, PIXEL * 20));
+            charList.add(new Alphabet(TypeOfAlphabet.T, PIXEL * 14, PIXEL * 20));
+            charList.add(new Alphabet(TypeOfAlphabet.O, PIXEL * 15, PIXEL * 20));
+            charList.add(new Alphabet(TypeOfAlphabet.S, PIXEL * 17, PIXEL * 20));
+            charList.add(new Alphabet(TypeOfAlphabet.T, PIXEL * 18, PIXEL * 20));
+            charList.add(new Alphabet(TypeOfAlphabet.A, PIXEL * 19, PIXEL * 20));
+            charList.add(new Alphabet(TypeOfAlphabet.R, PIXEL * 20, PIXEL * 20));
+            charList.add(new Alphabet(TypeOfAlphabet.T, PIXEL * 21, PIXEL * 20));
         }
     }
 
@@ -877,7 +960,7 @@ public class Tank2D extends GameScreen {
         RemoveUnusedObject();
         // player
         Player.getInstance().Update(deltaTime);
-        if (twoPlayersMode)
+        if (twoPlayersMode || lanMode)
             Player2.getInstance().Update(deltaTime);
         for (int i = 0; i < UIBar.size(); i++) {
             UIBar.get(i).Update(deltaTime);
@@ -941,7 +1024,25 @@ public class Tank2D extends GameScreen {
             Player.getInstance().Paint(g2);
         }
         //endregion
-        //region Level1
+        if (lanMode && isInRoom)
+        {
+            g2.setColor(Color.BLACK);
+            g2.fillRect(0, 0, (MAP_WIDTH_TILE + 6) * PIXEL, (MAP_HEIGHT_TILE + 4) * PIXEL);
+
+            //player 1
+            Player.getInstance().setPos(PIXEL * 8, PIXEL * 13);
+            Player.getInstance().Paint(g2);
+
+            //player 2
+            Player2.getInstance().setPos(PIXEL * 20, PIXEL * 13);
+            Player2.getInstance().Paint(g2);
+
+
+            for (int i = 0; i < charList.size(); i++)
+                charList.get(i).Paint(g2);
+            return;
+        }
+        //region Level
         if (CurrentScene != 0 && !endScene) {
             g2.setColor(Color.DARK_GRAY);
             g2.fillRect(0, 0, (MAP_WIDTH_TILE + 6) * PIXEL, (MAP_HEIGHT_TILE + 4) * PIXEL);
@@ -1079,6 +1180,21 @@ public class Tank2D extends GameScreen {
                 return;
             }
             if (CurrentScene != 0) {
+                if (isInRoom) {
+                    Player.getInstance().setState(Objects.State.RUN);
+                    Player2.getInstance().setState(Objects.State.RUN);
+
+                    if (isPlayerOne) //player 1 enter to start game
+                    switch (e) {
+                        case KeyEvent.VK_ENTER:
+                            InitLevel1();
+                            InitUIBar();
+                            isInRoom = false;
+                            break;
+                    }
+                    return;
+                }
+
                 if (!gameOver) {
                     switch (e) {
                         case KeyEvent.VK_LEFT: // left
@@ -1178,27 +1294,46 @@ public class Tank2D extends GameScreen {
                     if (System.currentTimeMillis() - playSoundTime > 300) {
                         PlaySound(KeyPressSound);
                         playSoundTime = System.currentTimeMillis();
+                        switch (e) {
+                            case KeyEvent.VK_UP: // up
+                                if (CursorPosition > 20)
+                                    CursorPosition -= 2;
+                                break;
+                            case KeyEvent.VK_DOWN: // down
+                                if (CursorPosition < 24)
+                                    CursorPosition += 2;
+                                break;
+                            case KeyEvent.VK_ENTER:
+                                if (CursorPosition == 22) {
+                                    twoPlayersMode = true;
+                                }
+                                if (CursorPosition == 24) {
+                                    lanMode = true;
+                                    isInRoom = true;
+                                }
+                                if (CursorPosition != 24) {
+                                    InitLevel1();
+                                    InitUIBar();
+                                } else {
+                                    InitRoom();
+                                    isInRoom = true;
+                                    twoPlayersMode = true;
+                                    //check if room exist => isPlayerOne
+                                    if (isPlayerOne) {
+                                        AddWaitingText();
+                                        //if two player enter room
+                                        AddStartText();
+                                    } else {
+                                        AddStartText();
+                                    }
+                                }
+                                CurrentScene++;
+                                break;
+                        }
                     };
-                    switch (e) {
-                        case KeyEvent.VK_UP: // up
-                            if (CursorPosition == 22)
-                                CursorPosition -= 2;
-                            break;
-                        case KeyEvent.VK_DOWN: // down
-                            if (CursorPosition == 20)
-                                CursorPosition += 2;
-                            break;
-                        case KeyEvent.VK_ENTER:
-                            if (CursorPosition == 22)
-                                twoPlayersMode = true;
-                            CurrentScene++;
-                            InitLevel1();
-                            InitUIBar();
-                            break;
-                    }
                 }
             }
-            if (CurrentScene != 0 && !gameOver) {
+            if (CurrentScene != 0 && !gameOver && !isInRoom) {
                 Player.getInstance().setState(Objects.State.IDLE);
                 Player2.getInstance().setState(Objects.State.IDLE);
             }
